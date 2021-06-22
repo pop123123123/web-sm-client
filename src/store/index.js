@@ -11,6 +11,7 @@ export default new Vuex.Store({
     projectSeed: null,
     videoChips: [],
     loadFile: null,
+
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -24,8 +25,6 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    GET_DATA_FROM_FILE() {
-    },
   },
   modules: {
   },
