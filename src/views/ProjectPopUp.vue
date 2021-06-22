@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <md-dialog :md-active.sync="popUp">
+    <md-dialog :md-active="!projectExist || popUp">
       <md-tabs md-dynamic-height md-alignment="fixed">
         <md-tab md-label="Create">
           <CreateForm />
@@ -11,9 +11,8 @@
         </md-tab>
       </md-tabs>
       <md-dialog-actions>
-        <md-button class="md-primary">Close</md-button>
-        <md-button class="md-primary"
-          >Start</md-button
+        <md-button v-if="projectExist" class="md-primary" @click="popUp = false"
+          >Close</md-button
         >
       </md-dialog-actions>
     </md-dialog>
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-// TODO Faire que le pop-up ne puisse pas se quitter tt le temps
+// TODO regler le file dans load
 import CreateForm from '@/components/CreateTab.vue';
 import LoadTab from '@/components/LoadTab.vue';
 
@@ -43,6 +42,20 @@ export default {
     loadFile() {
       console.log(this.$store.state.loadFile);
       // this.$store.dispatch('GET_DATA_FROM_FILE',this.$store.state.loadFile)
+    },
+  },
+  computed: {
+    projectExist() {
+      console.log(
+        this.$store.state.projectName,
+        this.$store.state.projectSeed,
+        this.$store.state.videoChips,
+      );
+      return (
+        this.$store.state.projectName
+        && this.$store.state.videoChips !== []
+        // TODO fix the condition with the size/content of videoChips
+      );
     },
   },
 };

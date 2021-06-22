@@ -13,7 +13,7 @@
             <md-input v-model="tempProject.Seed"> </md-input>
             <span class="md-helper-text">Optional, random by default</span>
           </md-field>
-
+<!-- todo bug with chips, trigger submit when pressing enter on chips -->
           <md-chips
             class="md-primary shake-on-error"
             v-model="tempProject.Videos"
