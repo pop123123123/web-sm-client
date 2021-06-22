@@ -20,11 +20,19 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT_SEED](state, newSeed) {
       state.projectSeed = newSeed;
     },
+    [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
+      state.videoChips = newVIDEOS;
+    },
     [mutation.CHANGE_LOAD_FILE](state, newFile) {
       state.loadFile = newFile;
     },
   },
   actions: {
+    CHANGE_PROJECT(state, newProject) {
+      state.commit('CHANGE_PROJECT_NAME', newProject.Name);
+      state.commit('CHANGE_PROJECT_SEED', newProject.Seed);
+      state.commit('CHANGE_PROJECT_VIDEOS', newProject.Videos);
+    },
   },
   modules: {
   },

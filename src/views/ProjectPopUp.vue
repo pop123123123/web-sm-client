@@ -12,7 +12,7 @@
       </md-tabs>
       <md-dialog-actions>
         <md-button class="md-primary">Close</md-button>
-        <md-button class="md-primary" @click="validationProject()"
+        <md-button class="md-primary"
           >Start</md-button
         >
       </md-dialog-actions>
@@ -24,8 +24,6 @@
 </template>
 
 <script>
-// TODO Changer la structure du tempoNames
-// TODO Mettre les commits dans une action
 // TODO Faire que le pop-up ne puisse pas se quitter tt le temps
 import CreateForm from '@/components/CreateTab.vue';
 import LoadTab from '@/components/LoadTab.vue';
@@ -38,24 +36,10 @@ export default {
   },
   data: () => ({
     popUp: false,
-    tempoName: '',
-    tempoSeed: '',
     initial: '',
     file: null,
   }),
   methods: {
-    validationProject() {
-      if (this.file) {
-        this.loadFile();
-      } else {
-        this.popUp = false;
-        this.$store.commit('CHANGE_PROJECT_NAME', this.tempoName);
-        this.$store.commit('CHANGE_PROJECT_SEED', this.tempoSeed);
-        console.log(this.tempoName);
-        console.log(this.tempoSeed);
-        console.log(this.$store.state.videoChips);
-      }
-    },
     loadFile() {
       console.log(this.$store.state.loadFile);
       // this.$store.dispatch('GET_DATA_FROM_FILE',this.$store.state.loadFile)

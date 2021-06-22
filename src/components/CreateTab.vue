@@ -1,26 +1,6 @@
 <template>
   <div class="hello">
-
-    <!-- <md-field>
-            <label>Project's Name</label>
-            <md-input md-input required v-model="tempoName"></md-input>
-          </md-field>
-          <md-field>
-            <label>Seed</label>
-            <md-input
-              md-input
-              helper="Optional, random by default"
-              v-model="tempoSeed"
-            ></md-input>
-          </md-field>
-          <md-chips
-            class="md-primary shake-on-error"
-            v-model="$store.state.videoChips"
-            md-placeholder="Add video"
-          >
-            <div class="md-helper-text">Copy youtube url or code</div>
-          </md-chips> -->
-    <form>
+    <form @submit.prevent="validateProject" >
       <md-card>
         <md-card-header class="Title1"> Project's Settings </md-card-header>
         <md-card-content>
@@ -36,7 +16,7 @@
 
           <md-chips
             class="md-primary shake-on-error"
-            v-model="$store.state.videoChips"
+            v-model="tempProject.Videos"
             md-placeholder="Add video"
           >
           <!-- <span
@@ -61,9 +41,13 @@ export default {
   name: 'CreateForm',
   props: {},
   data: () => ({
-    tempProject: { Name: null, Seed: null },
-    test: [1, 5, 'yui'],
+    tempProject: { Name: null, Seed: null, Videos: [] },
   }),
+  methods: {
+    validateProject() {
+      this.$store.dispatch('CHANGE_PROJECT', this.tempProject);
+    },
+  },
 };
 </script>
 
