@@ -1,0 +1,51 @@
+<template>
+  <div>
+    <md-dialog :md-active="popup">
+      <md-tabs md-dynamic-height md-alignment="fixed">
+        <md-tab md-label="Create">
+          <CreateForm @formValid="popup = false"/>
+        </md-tab>
+
+        <md-tab md-label="Load">
+          <LoadForm />
+        </md-tab>
+      </md-tabs>
+      <md-dialog-actions>
+        <md-button
+          v-if="!required"
+          class="md-primary"
+          @click="popup=false"
+        >
+          Close
+        </md-button>
+
+      </md-dialog-actions>
+    </md-dialog>
+  </div>
+</template>
+
+<script>
+import CreateForm from '@/components/CreateForm.vue';
+import LoadForm from '@/components/LoadForm.vue';
+
+export default {
+  name: 'ProjectPopUp',
+  props: {
+    required: Boolean,
+  },
+  components: {
+    CreateForm,
+    LoadForm,
+  },
+  data: () => ({
+    popup: true,
+  }),
+  methods: {
+  },
+  computed: {},
+};
+</script>
+
+<style lang="scss">
+
+</style>
