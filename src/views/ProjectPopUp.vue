@@ -24,7 +24,6 @@
 </template>
 
 <script>
-// TODO Changer en form
 // TODO Changer la structure du tempoNames
 // TODO Mettre les commits dans une action
 // TODO Faire que le pop-up ne puisse pas se quitter tt le temps
