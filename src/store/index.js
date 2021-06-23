@@ -7,12 +7,12 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    ComboTab: [{ sentence: 'Bonjour', index: 2 }, { sentence: 'moi', index: 4 }],
     project: {
       name: null,
       seed: null,
       video_urls: [],
     },
-
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -23,6 +23,9 @@ export default new Vuex.Store({
     },
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
       state.project.video_urls = newVIDEOS;
+    },
+    ADD_SENTENCE(state, newSentence) {
+      state.ComboTab.push({ sentence: newSentence, index: 1 });
     },
   },
   actions: {

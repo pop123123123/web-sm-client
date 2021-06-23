@@ -1,11 +1,7 @@
 <template>
   <div class="page-container">
-    <md-app md-mode="reveal">
+     <router-view/>
 
-      <md-app-content>
-        <router-view/>
-      </md-app-content>
-    </md-app>
   </div>
 </template>
 
