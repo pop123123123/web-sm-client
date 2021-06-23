@@ -1,52 +1,83 @@
 <template>
-  <div class="main">
-    <md-toolbar class="" md-elevation="1">
+  <md-app md-mode="reveal">
+    <md-app-drawer></md-app-drawer>
+    <md-app-toolbar class="" md-elevation="1">
       <md-button class="md-primary md-raised"
-        ><span class="material-icons"> add </span>New Project / Open
-        Project</md-button
+        >New Project / Open Project</md-button
       >
-      <md-button class="md-primary md-raised"
-        ><span class="material-icons"> list </span>Action</md-button
-      >
+      <md-button class="md-primary md-raised">Action</md-button>
       <h3 class="md-title" style="flex: 1"></h3>
-      <md-button class="md-primary md-raised"
-        ><span class="material-icons"> save </span>Save</md-button
-      >
-      <md-button class="md-primary md-raised"
-        ><span class="material-icons"> share </span>Export</md-button
-      >
-    </md-toolbar>
+      <md-button class="md-primary md-raised">Save</md-button>
+      <md-button class="md-primary md-raised">Export</md-button>
+    </md-app-toolbar>
 
-    <md-card class="md-layout-item md-size-45 md-small-size-45">
-      <md-card-header>
-        <div class="md-title">Title goes here</div>
-      </md-card-header>
-      <md-card-content>
-        <md-list>
-          <md-list-item
-            ><md-field md-inline>
-              <label>Sentence</label
-              ><md-input class="md-layout-item"></md-input> </md-field
-          ></md-list-item>
-        </md-list>
-      </md-card-content>
-    </md-card>
+    <md-app-content class="md-layout">
+ <!-- TODO menu déroulant -->
+      <md-card class="md-layout-item md-size-45 md-small-size-45">
+        <md-card-header>
+          <div class="md-title">Title goes here</div>
+        </md-card-header>
+        <md-card-content>
 
-    <md-card class="md-layout-item md-size-45 md-small-size-45">
-      <md-card-header>
-        <div class="md-title">Title goes here</div>
-      </md-card-header>
+          <md-table
+            v-model="this.$store.state.ComboTab"
+            md-sort="name"
+            md-sort-order="asc"
+            md-card
+            md-fixed-header
+          >
+            <md-table-toolbar>
+              <div class="md-toolbar-section-start">
+                <h1 class="md-title">Sentences</h1>
+              </div>
+              <md-field md-clearable class="md-toolbar-section-end">
+                <md-input
+                  placeholder="Search by name..."
+                  v-model="search"
+                  @input="searchOnTable"
+                />
+                <!-- TODO réparer le search -->
+              </md-field>
+            </md-table-toolbar>
 
-      <md-card-media> video here </md-card-media>
-    </md-card>
-  </div>
+            <md-table-empty-state md-label="Nothing here">
+              <md-button class="md-primary md-raised" @click="newSentence"
+                >Create new sentence</md-button
+              >
+            </md-table-empty-state>
+
+            <md-table-row slot="md-table-row" slot-scope="{ item }">
+              <md-table-cell md-label="Sentence" md-sort-by="sentence">{{
+                item.sentence
+              }}</md-table-cell>
+              <md-table-cell md-label="Index" md-sort-by="index" md-numeric>{{
+                item.index
+              }}</md-table-cell>
+            </md-table-row>
+
+          </md-table>
+        </md-card-content>
+      </md-card>
+
+      <md-card class="md-layout-item md-size-45 md-small-size-45">
+        <md-card-header>
+          <div class="md-title">Title goes here</div>
+        </md-card-header>
+
+        <md-card-media> video here </md-card-media>
+      </md-card>
+    </md-app-content>
+  </md-app>
 </template>
 
 <script>
 export default {
   name: 'Panel',
   props: {},
-  data: () => ({}),
+  data: () => ({
+    search: null,
+    searched: [],
+  }),
   methods: {},
 };
 </script>
