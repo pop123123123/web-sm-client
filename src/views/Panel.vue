@@ -20,7 +20,7 @@
         <md-card-content>
 
           <md-table
-            v-model="this.$store.state.ComboTab"
+            v-model="$store.state.ComboTab"
             md-sort="name"
             md-sort-order="asc"
             md-card
@@ -71,6 +71,15 @@
 </template>
 
 <script>
+const toLower = (text) => text.toString().toLowerCase();
+
+const searchByName = (items, term) => {
+  if (term) {
+    return items.filter((item) => toLower(item.sentence).includes(toLower(term)));
+  }
+
+  return items;
+};
 export default {
   name: 'Panel',
   props: {},
@@ -78,7 +87,14 @@ export default {
     search: null,
     searched: [],
   }),
-  methods: {},
+  methods: {
+    newSentence() {
+
+    },
+    searchOnTable() {
+      this.searched = searchByName(this.$store.state.ComboTab, this.search);
+    },
+  },
 };
 </script>
 
