@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    ComboTab: [{ sentence: 'Bonjour', index: 2 }, { sentence: 'moi', index: 4 }],
+    combos: [{ sentence: 'Bonjour', index: 2 }, { sentence: 'moi', index: 4 }],
     project: {
       name: null,
       seed: null,
@@ -25,7 +25,7 @@ export default new Vuex.Store({
       state.project.video_urls = newVIDEOS;
     },
     ADD_SENTENCE(state, newSentence) {
-      state.ComboTab.push({ sentence: newSentence, index: 1 });
+      state.combos.push({ sentence: newSentence, index: 1 });
     },
   },
   actions: {

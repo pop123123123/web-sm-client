@@ -20,7 +20,7 @@
         <md-card-content>
 
           <md-table
-            v-model="$store.state.ComboTab"
+            v-model="filteredSearch"
             md-sort="name"
             md-sort-order="asc"
             md-card
@@ -36,7 +36,6 @@
                   v-model="search"
                   @input="searchOnTable"
                 />
-                <!-- TODO réparer le search -->
               </md-field>
             </md-table-toolbar>
 
@@ -83,16 +82,18 @@ const searchByName = (items, term) => {
 export default {
   name: 'Panel',
   props: {},
-  data: () => ({
-    search: null,
-    searched: [],
-  }),
+  data() {
+    return {
+      search: null,
+      filteredSearch: this.$store.state.combos,
+    };
+  },
   methods: {
     newSentence() {
 
     },
     searchOnTable() {
-      this.searched = searchByName(this.$store.state.ComboTab, this.search);
+      this.filteredSearch = searchByName(this.$store.state.combos, this.search);
     },
   },
 };
