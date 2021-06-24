@@ -5,7 +5,7 @@
       <md-button class="md-primary md-raised"
         >New Project / Open Project</md-button
       >
-      <md-button class="md-primary md-raised">Action</md-button>
+      <Menu name="Action"/>
       <h3 class="md-title" style="flex: 1"></h3>
       <md-button class="md-primary md-raised">Save</md-button>
       <md-button class="md-primary md-raised">Export</md-button>
@@ -56,6 +56,11 @@
 
           </md-table>
         </md-card-content>
+        <md-card-actions>
+
+          <md-button @click="newSentence">Add</md-button>
+          <md-button @click="remove">Delete</md-button>
+        </md-card-actions>
       </md-card>
 
       <md-card class="md-layout-item md-size-45 md-small-size-45">
@@ -71,6 +76,7 @@
 
 <script>
 import Video from '@/components/Video.vue';
+import Menu from '@/components/Menu.vue';
 
 const toLower = (text) => text.toString().toLowerCase();
 
@@ -86,6 +92,7 @@ export default {
   props: {},
   components: {
     Video,
+    Menu,
   },
   data() {
     return {
@@ -95,10 +102,14 @@ export default {
   },
   methods: {
     newSentence() {
-
+      this.$store.dispatch('NEW_SENTENCE');
     },
     searchOnTable() {
       this.filteredSearch = searchByName(this.$store.state.combos, this.search);
+    },
+    remove() {
+      // For now it only remove the last one,
+      this.$store.dispatch('DELETE_LAST');
     },
   },
 };
