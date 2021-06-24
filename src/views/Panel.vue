@@ -63,13 +63,15 @@
           <div class="md-title">Title goes here</div>
         </md-card-header>
 
-        <md-card-media> video here </md-card-media>
+        <md-card-media> <Video/> </md-card-media>
       </md-card>
     </md-app-content>
   </md-app>
 </template>
 
 <script>
+import Video from '@/components/Video.vue';
+
 const toLower = (text) => text.toString().toLowerCase();
 
 const searchByName = (items, term) => {
@@ -82,6 +84,9 @@ const searchByName = (items, term) => {
 export default {
   name: 'Panel',
   props: {},
+  components: {
+    Video,
+  },
   data() {
     return {
       search: null,
