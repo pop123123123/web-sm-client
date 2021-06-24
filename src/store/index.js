@@ -7,7 +7,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    combos: [{ sentence: 'Bonjour', index: 2 }, { sentence: 'moi', index: 4 }],
+    combos: [{ sentence: 'Bonjour', index: 2, id: 1 }],
+    idListener: 1,
     project: {
       name: null,
       seed: null,
@@ -28,10 +29,13 @@ export default new Vuex.Store({
       state.combos.push({ sentence: newSentence, index: 1 });
     },
     PUSH_EMPTY_SENTENCE(state) {
-      state.combos.push({ sentence: 'empty', index: 0 });
+      state.combos.push({ sentence: 'empty', index: 0, id: state.idListener });
     },
-    REMOVE(state, index) {
-      state.combos.splice(index, 1);
+    REMOVE(state, id) {
+      state.combos = state.combos.filter((element) => element.id !== id);
+    },
+    INCREASE_LISTENER(state) {
+      state.idListener += 1;
     },
   },
   actions: {
@@ -41,10 +45,11 @@ export default new Vuex.Store({
       state.commit('CHANGE_PROJECT_VIDEOS', newProject.video_urls);
     },
     NEW_SENTENCE(state) {
+      state.commit('INCREASE_LISTENER');
       state.commit('PUSH_EMPTY_SENTENCE');
     },
-    DELETE_LAST(state) {
-      state.commit('REMOVE', state.state.combos.length - 1);
+    DELETE(state, id) {
+      state.commit('REMOVE', id);
     },
   },
   modules: {
