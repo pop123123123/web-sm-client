@@ -27,12 +27,24 @@ export default new Vuex.Store({
     ADD_SENTENCE(state, newSentence) {
       state.combos.push({ sentence: newSentence, index: 1 });
     },
+    PUSH_EMPTY_SENTENCE(state) {
+      state.combos.push({ sentence: 'empty', index: 0 });
+    },
+    REMOVE(state, index) {
+      state.combos.splice(index, 1);
+    },
   },
   actions: {
     CREATE_PROJECT(state, newProject) {
       state.commit('CHANGE_PROJECT_NAME', newProject.name);
       state.commit('CHANGE_PROJECT_SEED', newProject.seed);
       state.commit('CHANGE_PROJECT_VIDEOS', newProject.video_urls);
+    },
+    NEW_SENTENCE(state) {
+      state.commit('PUSH_EMPTY_SENTENCE');
+    },
+    DELETE_LAST(state) {
+      state.commit('REMOVE', state.state.combos.length - 1);
     },
   },
   modules: {
