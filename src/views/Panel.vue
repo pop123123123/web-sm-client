@@ -100,7 +100,7 @@ export default {
     return {
       search: null,
       filteredSearch: this.$store.state.combos,
-      selected: {},
+      selected: null,
     };
   },
   methods: {
@@ -117,6 +117,16 @@ export default {
     onSelect(item) {
       this.selected = item;
     },
+    onkey(event) {
+      if (event.code === 'Delete' || event.code === 'BackSpace') { this.remove(); }
+      if (event.code === 'Enter') { this.newSentence(); }
+    },
+  },
+  created() {
+    window.addEventListener('keydown', this.onkey);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.onkey);
   },
 };
 </script>
