@@ -25,6 +25,7 @@
             md-sort-order="asc"
             md-card
             md-fixed-header
+            @md-selected="onSelect"
           >
             <md-table-toolbar>
               <div class="md-toolbar-section-start">
@@ -45,7 +46,7 @@
               >
             </md-table-empty-state>
 
-            <md-table-row slot="md-table-row" slot-scope="{ item }">
+            <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
               <md-table-cell md-label="Sentence" md-sort-by="sentence">{{
                 item.sentence
               }}</md-table-cell>
@@ -58,8 +59,9 @@
         </md-card-content>
         <md-card-actions>
 
-          <md-button @click="newSentence">Add</md-button>
-          <md-button @click="remove">Delete</md-button>
+          <md-button class="md-raised md-primary" @click="newSentence">Add</md-button>
+          <md-button v-if="selected" class="md-raised md-primary" @click="remove">Delete</md-button>
+          <md-button v-else class="md-raised md-primary" disabled>Delete</md-button>
         </md-card-actions>
       </md-card>
 
@@ -98,6 +100,7 @@ export default {
     return {
       search: null,
       filteredSearch: this.$store.state.combos,
+      selected: {},
     };
   },
   methods: {
@@ -108,12 +111,18 @@ export default {
       this.filteredSearch = searchByName(this.$store.state.combos, this.search);
     },
     remove() {
-      // For now it only remove the last one,
-      this.$store.dispatch('DELETE_LAST');
+      this.$store.dispatch('DELETE', this.selected.id);
+      this.filteredSearch = this.$store.state.combos;
+    },
+    onSelect(item) {
+      this.selected = item;
     },
   },
 };
 </script>
 
 <style lang="scss">
+.delete{
+ background-color: grey;
+}
 </style>
