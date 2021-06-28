@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    combos: [{ sentence: 'Bonjour', index: 2, id: 1 }],
+    combos: [{ sentence: 'Bonjour', comboIndex: 2, id: 1 }],
     idListener: 1,
     project: {
       name: null,
@@ -26,10 +26,10 @@ export default new Vuex.Store({
       state.project.video_urls = newVIDEOS;
     },
     ADD_SENTENCE(state, newSentence) {
-      state.combos.push({ sentence: newSentence, index: 1 });
+      state.combos.push({ sentence: newSentence, comboIndex: 1 });
     },
     PUSH_EMPTY_SENTENCE(state) {
-      state.combos.push({ sentence: 'empty', index: 0, id: state.idListener });
+      state.combos.push({ sentence: 'empty', comboIndex: 0, id: state.idListener });
     },
     REMOVE(state, id) {
       state.combos = state.combos.filter((element) => element.id !== id);
