@@ -18,7 +18,6 @@
           <div class="md-title">Title goes here</div>
         </md-card-header>
         <md-card-content>
-          {{selected}}
           <v-data-table
             v-model="selected"
             :headers="headers"
@@ -26,7 +25,23 @@
             show-select
             :single-select="false"
             class="elevation-1"
-          ></v-data-table>
+          >
+            <template v-slot:item.sentence="props">
+              <!-- TODO why this error ? -->
+              <v-edit-dialog :return-value.sync="props.item.sentence">
+                {{ props.item.sentence }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="props.item.sentence"
+                    :rules="[max25chars]"
+                    label="Edit"
+                    single-line
+                    counter
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+          </v-data-table>
         </md-card-content>
         <md-card-actions>
           <md-button class="md-raised md-primary" @click="newSentence"
@@ -80,6 +95,7 @@ export default {
       search: null,
       filteredSearch: this.$store.state.combos,
       selected: [],
+      max25chars: (v) => v.length <= 25 || 'Input too long!',
       headers: [
         {
           text: 'Sentence',
@@ -108,7 +124,7 @@ export default {
       if (event.code === 'Delete' || event.code === 'BackSpace') {
         this.remove();
       }
-      if (event.code === 'Enter') {
+      if (event.code === 'KeyN') {
         this.newSentence();
       }
     },

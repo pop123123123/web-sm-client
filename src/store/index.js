@@ -29,7 +29,7 @@ export default new Vuex.Store({
       state.combos.push({ sentence: newSentence, comboIndex: 1 });
     },
     PUSH_EMPTY_SENTENCE(state) {
-      state.combos.push({ sentence: 'empty', comboIndex: 0, id: state.idListener });
+      state.combos.push({ sentence: '', comboIndex: 0, id: state.idListener });
     },
     REMOVE(state, id) {
       state.combos = state.combos.filter((element) => element.id !== id);
