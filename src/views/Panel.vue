@@ -18,6 +18,8 @@
           <div class="md-title">Title goes here</div>
         </md-card-header>
         <md-card-content>
+          {{$store.state.combos}}
+          {{selected}}
            <v-text-field
         v-model="search"
         append-icon="mdi-magnify"
@@ -35,9 +37,10 @@
             :search="search"
           >
           <!-- TODO fix multiple selection that doesn't work with that next segement : -->
-            <!-- <template v-slot:item.sentence="props">
+          <!-- TODO the fact that the data are {element:{sentence:"",comboIndex:""},index:0} too -->
+            <!-- <template v-slot:item.element.sentence="props">
               <v-edit-dialog :return-value.sync="props.item.sentence">
-                {{ props.item.sentence }}s
+                {{ props.item.sentence }}
                 <template v-slot:input>
                   <v-text-field
                     v-model="props.item.sentence"
@@ -49,6 +52,12 @@
                 </template>
               </v-edit-dialog>
             </template> -->
+            <template  v-slot:item.element.comboIndex="{item}">
+                    <v-btn elevation = "1" x-small>{{left}}</v-btn>
+              {{item.element.comboIndex}}
+                    <v-btn elevation = "1" x-small>{{right}}</v-btn>
+
+                </template>
           </v-data-table>
         </md-card-content>
         <md-card-actions>
@@ -82,15 +91,6 @@
 import Video from '@/components/Video.vue';
 import Menu from '@/components/Menu.vue';
 
-const toLower = (text) => text.toString().toLowerCase();
-
-const searchByName = (items, term) => {
-  if (term) {
-    return items.filter((item) => toLower(item.sentence).includes(toLower(term)));
-  }
-
-  return items;
-};
 export default {
   name: 'Panel',
   props: {},
@@ -104,13 +104,15 @@ export default {
       filteredSearch: this.$store.state.combos,
       selected: [],
       max25chars: (v) => v.length <= 25 || 'Input too long!',
+      right: '>',
+      left: '<',
       headers: [
         {
           text: 'Sentence',
           align: 'start',
-          value: 'sentence',
+          value: 'element.sentence',
         },
-        { text: 'Index', value: 'comboIndex' },
+        { text: 'Index', value: 'element.comboIndex' },
       ],
     };
   },
@@ -118,12 +120,9 @@ export default {
     newSentence() {
       this.$store.dispatch('NEW_SENTENCE');
     },
-    searchOnTable() {
-      this.filteredSearch = searchByName(this.$store.state.combos, this.search);
-    },
     remove() {
       this.selected.forEach((element) => {
-        this.$store.dispatch('DELETE', element.id);
+        this.$store.dispatch('DELETE', element.index);
       });
       this.selected = [];
       this.filteredSearch = this.$store.state.combos;
@@ -139,7 +138,11 @@ export default {
   },
   computed: {
     lines() {
-      return this.$store.state.combos;
+      return this.$store.state.combos.map((element, index) => {
+        let newElement = {};
+        newElement = { element, index };
+        return newElement;
+      });
     },
   },
   created() {
