@@ -18,7 +18,6 @@
           <div class="md-title">Title goes here</div>
         </md-card-header>
         <md-card-content>
-          {{$store.state.combos}}
           {{selected}}
            <v-text-field
         v-model="search"
@@ -31,19 +30,18 @@
             v-model="selected"
             :headers="headers"
             :items="lines"
+            item-key="index"
             show-select
             :single-select="false"
             class="elevation-1"
             :search="search"
           >
-          <!-- TODO fix multiple selection that doesn't work with that next segement : -->
-          <!-- TODO the fact that the data are {element:{sentence:"",comboIndex:""},index:0} too -->
-            <!-- <template v-slot:item.element.sentence="props">
-              <v-edit-dialog :return-value.sync="props.item.sentence">
-                {{ props.item.sentence }}
+            <template v-slot:item.element.sentence="props">
+              <v-edit-dialog :return-value.sync="props.item.element.sentence">
+                {{ props.item.element.sentence }}
                 <template v-slot:input>
                   <v-text-field
-                    v-model="props.item.sentence"
+                    v-model="props.item.element.sentence"
                     :rules="[max25chars]"
                     label="Edit"
                     single-line
@@ -51,7 +49,7 @@
                   ></v-text-field>
                 </template>
               </v-edit-dialog>
-            </template> -->
+            </template>
             <template  v-slot:item.element.comboIndex="{item}">
                     <v-btn elevation = "1" x-small>{{left}}</v-btn>
               {{item.element.comboIndex}}
@@ -121,11 +119,12 @@ export default {
       this.$store.dispatch('NEW_SENTENCE');
     },
     remove() {
+      let indexOffset = 0;
       this.selected.forEach((element) => {
-        this.$store.dispatch('DELETE', element.index);
+        this.$store.dispatch('DELETE', element.index - indexOffset);
+        indexOffset += 1;
       });
       this.selected = [];
-      this.filteredSearch = this.$store.state.combos;
     },
     onkey(event) {
       if (event.code === 'Delete' || event.code === 'BackSpace') {
