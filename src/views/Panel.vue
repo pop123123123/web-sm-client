@@ -18,6 +18,13 @@
           <div class="md-title">Title goes here</div>
         </md-card-header>
         <md-card-content>
+           <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
           <v-data-table
             v-model="selected"
             :headers="headers"
@@ -25,11 +32,12 @@
             show-select
             :single-select="false"
             class="elevation-1"
+            :search="search"
           >
-            <template v-slot:item.sentence="props">
-              <!-- TODO why this error ? -->
+          <!-- TODO fix multiple selection that doesn't work with that next segement : -->
+            <!-- <template v-slot:item.sentence="props">
               <v-edit-dialog :return-value.sync="props.item.sentence">
-                {{ props.item.sentence }}
+                {{ props.item.sentence }}s
                 <template v-slot:input>
                   <v-text-field
                     v-model="props.item.sentence"
@@ -40,7 +48,7 @@
                   ></v-text-field>
                 </template>
               </v-edit-dialog>
-            </template>
+            </template> -->
           </v-data-table>
         </md-card-content>
         <md-card-actions>
@@ -92,7 +100,7 @@ export default {
   },
   data() {
     return {
-      search: null,
+      search: '',
       filteredSearch: this.$store.state.combos,
       selected: [],
       max25chars: (v) => v.length <= 25 || 'Input too long!',
