@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    combos: [{ sentence: 'Bonjour', comboIndex: 2, id: 1 }],
+    combos: [{ sentence: 'Bonjour', comboIndex: 2 }],
     idListener: 1,
     project: {
       name: null,
@@ -29,10 +29,10 @@ export default new Vuex.Store({
       state.combos.push({ sentence: newSentence, comboIndex: 1 });
     },
     PUSH_EMPTY_SENTENCE(state) {
-      state.combos.push({ sentence: '', comboIndex: 0, id: state.idListener });
+      state.combos.push({ sentence: '', comboIndex: 0 });
     },
-    REMOVE(state, id) {
-      state.combos = state.combos.filter((element) => element.id !== id);
+    REMOVE(state, index) {
+      state.combos.splice(index, 1);
     },
     INCREASE_LISTENER(state) {
       state.idListener += 1;
