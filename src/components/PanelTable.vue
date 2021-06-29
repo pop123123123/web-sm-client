@@ -48,7 +48,6 @@
               >
             </template>
           </v-data-table>
-          {{selected}}
           <md-card-actions>
           <md-button class="md-raised md-primary" @click="newSentence"
             >Add</md-button
