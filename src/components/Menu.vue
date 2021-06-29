@@ -1,31 +1,45 @@
 <template>
-    <div class="menu">
-<md-menu md-size="auto" md-align-trigger>
-      <md-button md-menu-trigger class="md-raised md-primary">{{name}}</md-button>
-<!-- TODO fix the height of the menu -->
-      <md-menu-content>
-        <md-menu-item>Undo</md-menu-item>
-        <md-menu-item>Redo</md-menu-item>
+    <div class="text-center">
+    <!-- <v-menu offset-y>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          {{name}}
+        </v-btn>
+      </template>
 
-        <md-menu-item>Add</md-menu-item>
-        <md-menu-item>Remove</md-menu-item>
-
-        <md-menu-item>Move up</md-menu-item>
-        <md-menu-item>Move down</md-menu-item>
-
-        <md-menu-item>Copy</md-menu-item>
-        <md-menu-item>Paste</md-menu-item>
-      </md-menu-content>
-    </md-menu>
-    </div>
+      <v-list>
+        <v-list-item
+          v-for="(item, index) in items"
+          :key="index"
+        >
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu> -->
+  </div>
 </template>
 
 <script>
 
 export default {
   name: 'Menu',
+
   props: {
     name: String,
+  },
+  data() {
+    return {
+      items: [
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me 2' },
+      ],
+    };
   },
 };
 </script>
