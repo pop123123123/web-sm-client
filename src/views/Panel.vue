@@ -12,15 +12,18 @@
     </md-app-toolbar>
 
     <md-app-content class="md-layout">
-      <!-- TODO menu déroulant -->
+      <ProjectPopUp required></ProjectPopUp>
       <md-card class="md-layout-item md-size-45 md-small-size-45">
         <md-card-header>
-          <div class="md-title">Title goes here</div>
+          <div class="md-title">
+            <h2>{{ $store.state.project.name }}</h2>
+            </div>
+            <p class="grey">Seed:{{ $store.state.project.seed }}</p>
+
         </md-card-header>
         <md-card-content>
-          <PanelTable/>
+          <PanelTable />
         </md-card-content>
-
       </md-card>
 
       <md-card class="md-layout-item md-size-45 md-small-size-45">
@@ -38,6 +41,7 @@
 import Video from '@/components/Video.vue';
 import Menu from '@/components/Menu.vue';
 import PanelTable from '@/components/PanelTable.vue';
+import ProjectPopUp from '@/components/ProjectPopUp.vue';
 
 export default {
   name: 'Panel',
@@ -46,19 +50,17 @@ export default {
     Video,
     Menu,
     PanelTable,
+    ProjectPopUp,
   },
   data() {
-    return {
-    };
+    return {};
   },
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 
 <style lang="scss">
-.delete {
-  background-color: grey;
+.grey {
+  color: grey
 }
 </style>
