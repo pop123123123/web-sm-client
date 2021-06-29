@@ -96,12 +96,15 @@ export default {
     },
 
     onkey(event) {
-      // console.log(event.code);
-      if (event.code === 'Delete' || event.code === 'BackSpace') {
+      // console.log(event);
+      if ((event.shiftKey && event.code === 'BackSpace') || event.code === 'Delete') {
         this.remove();
       }
-      if (event.code === 'ControlLeft') {
+      if (event.shiftKey && event.code === 'ArrowDown') {
         this.newSentence();
+      }
+      if (event.shiftKey && event.code === 'ArrowUp') {
+        // action
       }
     },
     increaseComboIndex(index, n) {

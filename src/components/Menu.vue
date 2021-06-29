@@ -4,7 +4,7 @@
 
     <v-menu offset-y min-width="250">
       <template v-slot:activator="{ on ,attrs}">
-        <v-btn color="" v-bind="attrs" v-on="on">{{ name }} </v-btn>
+        <v-btn v-bind="attrs" v-on="on">{{ name }} </v-btn>
         <!-- TODO change color of the button -->
       </template>
       <v-list>
@@ -50,7 +50,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.blue{
-background-color: blue;
-}
 </style>

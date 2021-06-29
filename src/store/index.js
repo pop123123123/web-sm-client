@@ -24,9 +24,6 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
       state.project.video_urls = newVIDEOS;
     },
-    ADD_SENTENCE(state, newSentence) {
-      state.combos.push({ sentence: newSentence, comboIndex: 1 });
-    },
     PUSH_EMPTY_SENTENCE(state) {
       state.combos.push({ sentence: '', comboIndex: 0 });
     },
