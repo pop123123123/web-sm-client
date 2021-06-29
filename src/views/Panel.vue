@@ -18,14 +18,15 @@
           <div class="md-title">Title goes here</div>
         </md-card-header>
         <md-card-content>
-          {{selected}}
-           <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
+          {{$store.state.combos}}
+          {{ selected }}
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
           <v-data-table
             v-model="selected"
             :headers="headers"
@@ -50,12 +51,21 @@
                 </template>
               </v-edit-dialog>
             </template>
-            <template  v-slot:item.element.comboIndex="{item}">
-                    <v-btn elevation = "1" x-small>{{left}}</v-btn>
-              {{item.element.comboIndex}}
-                    <v-btn elevation = "1" x-small>{{right}}</v-btn>
-
-                </template>
+            <template v-slot:item.element.comboIndex="{ item }">
+              <v-btn
+                @click="increaseComboIndex(item.index, -1)"
+                elevation="1"
+                x-small
+                >{{ left }}</v-btn
+              >
+              {{ item.element.comboIndex }}
+              <v-btn
+                @click="increaseComboIndex(item.index, 1)"
+                elevation="1"
+                x-small
+                >{{ right }}</v-btn
+              >
+            </template>
           </v-data-table>
         </md-card-content>
         <md-card-actions>
@@ -132,6 +142,11 @@ export default {
       }
       if (event.code === 'KeyN') {
         this.newSentence();
+      }
+    },
+    increaseComboIndex(index, n) {
+      if (!(n === -1 && this.$store.state.combos[index].comboIndex === 0)) {
+        this.$store.commit('CHANGE_COMBO_INDEX', { index, n });
       }
     },
   },
