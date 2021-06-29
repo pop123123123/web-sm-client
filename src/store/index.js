@@ -8,7 +8,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     combos: [{ sentence: 'Bonjour', comboIndex: 2 }],
-    idListener: 1,
     project: {
       name: null,
       seed: null,
@@ -34,8 +33,8 @@ export default new Vuex.Store({
     REMOVE(state, index) {
       state.combos.splice(index, 1);
     },
-    INCREASE_LISTENER(state) {
-      state.idListener += 1;
+    CHANGE_COMBO_INDEX(state, { index, n }) {
+      state.combos[index].comboIndex += n;
     },
   },
   actions: {
@@ -45,7 +44,6 @@ export default new Vuex.Store({
       state.commit('CHANGE_PROJECT_VIDEOS', newProject.video_urls);
     },
     NEW_SENTENCE(state) {
-      state.commit('INCREASE_LISTENER');
       state.commit('PUSH_EMPTY_SENTENCE');
     },
     DELETE(state, id) {
