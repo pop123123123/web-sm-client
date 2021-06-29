@@ -1,75 +1,69 @@
 <template>
-<div class="table">
-   <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-data-table
-            v-model="selected"
-            :headers="headers"
-            :items="lines"
-            item-key="index"
-            show-select
-            :items-per-page="12"
-            :single-select="false"
-            class="elevation-1"
-            :search="search"
-          >
-            <template v-slot:item.element.sentence="props">
-              <v-edit-dialog :return-value.sync="props.item.element.sentence">
-                {{ props.item.element.sentence }}
-                <template v-slot:input>
-                  <v-text-field
-                    v-model="props.item.element.sentence"
-                    :rules="[max25chars]"
-                    label="Edit"
-                    single-line
-                    counter
-                  ></v-text-field>
-                </template>
-              </v-edit-dialog>
-            </template>
-            <template v-slot:item.element.comboIndex="{ item }">
-              <v-btn
-                @click="increaseComboIndex(item.index, -1)"
-                elevation="1"
-                x-small
-                >{{ left }}</v-btn
-              >
-              {{ item.element.comboIndex }}
-              <v-btn
-                @click="increaseComboIndex(item.index, 1)"
-                elevation="1"
-                x-small
-                >{{ right }}</v-btn
-              >
-            </template>
-          </v-data-table>
-          <md-card-actions>
-          <md-button class="md-raised md-primary" @click="newSentence"
-            >Add</md-button
-          >
-          <md-button
-            class="md-raised md-primary"
-            @click="remove"
-            >Delete</md-button
-          >
-          <!-- <md-button v-else class="md-raised md-primary" disabled
+  <div class="table">
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search"
+      single-line
+      hide-details
+    ></v-text-field>
+    <v-data-table
+      v-model="selected"
+      :headers="headers"
+      :items="lines"
+      item-key="index"
+      show-select
+      :items-per-page="12"
+      :single-select="false"
+      class="elevation-1"
+      :search="search"
+    >
+      <template v-slot:item.element.sentence="props">
+        <v-edit-dialog :return-value.sync="props.item.element.sentence">
+          {{ props.item.element.sentence }}
+          <template v-slot:input>
+            <v-text-field
+              v-model="props.item.element.sentence"
+              :rules="[max25chars]"
+              label="Edit"
+              single-line
+              counter
+            ></v-text-field>
+          </template>
+        </v-edit-dialog>
+      </template>
+      <template v-slot:item.element.comboIndex="{ item }">
+        <v-btn
+          @click="increaseComboIndex(item.index, -1)"
+          elevation="1"
+          x-small
+          >{{ left }}</v-btn
+        >
+        {{ item.element.comboIndex }}
+        <v-btn
+          @click="increaseComboIndex(item.index, 1)"
+          elevation="1"
+          x-small
+          >{{ right }}</v-btn
+        >
+      </template>
+    </v-data-table>
+    <md-card-actions>
+      <md-button class="md-raised md-primary" @click="newSentence"
+        >Add</md-button
+      >
+      <md-button class="md-raised md-primary" @click="remove">Delete</md-button>
+      <!-- <md-button v-else class="md-raised md-primary" disabled
             >Delete</md-button
           > -->
-        </md-card-actions>
-</div>
-
+    </md-card-actions>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'PanelTable',
-  props: {
-  },
+  props: {},
   data() {
     return {
       search: '',
@@ -100,6 +94,7 @@ export default {
       });
       this.selected = [];
     },
+
     onkey(event) {
       // console.log(event.code);
       if (event.code === 'Delete' || event.code === 'BackSpace') {
@@ -114,7 +109,6 @@ export default {
         this.$store.commit('CHANGE_COMBO_INDEX', { index, n });
       }
     },
-
   },
   computed: {
     lines() {
@@ -124,7 +118,6 @@ export default {
         return newElement;
       });
     },
-
   },
   created() {
     window.addEventListener('keydown', this.onkey);
@@ -136,5 +129,4 @@ export default {
 </script>
 
 <style>
-
 </style>
