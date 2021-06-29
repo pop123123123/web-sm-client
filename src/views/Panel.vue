@@ -5,6 +5,7 @@
       <md-button class="md-primary md-raised"
         >New Project / Open Project</md-button
       >
+
       <Menu name="Action" />
       <h3 class="md-title" style="flex: 1"></h3>
       <md-button class="md-primary md-raised">Save</md-button>
@@ -22,6 +23,7 @@
 
         </md-card-header>
         <md-card-content>
+          {{$store.state.combos}}
           <PanelTable />
         </md-card-content>
       </md-card>
@@ -53,7 +55,8 @@ export default {
     ProjectPopUp,
   },
   data() {
-    return {};
+    return {
+    };
   },
   methods: {},
 };
