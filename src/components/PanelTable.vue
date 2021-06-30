@@ -19,6 +19,7 @@
       :search="search"
     >
       <template v-slot:item.element.sentence="props">
+
         <v-edit-dialog :return-value.sync="props.item.element.sentence">
           {{ props.item.element.sentence }}
           <template v-slot:input>
@@ -32,6 +33,7 @@
           </template>
         </v-edit-dialog>
       </template>
+
       <template v-slot:item.element.comboIndex="{ item }">
         <v-btn
           @click="increaseComboIndex(item.index, -1)"
@@ -48,6 +50,7 @@
         >
       </template>
     </v-data-table>
+
     <md-card-actions>
       <md-button class="md-raised md-primary" @click="newSentence"
         >Add</md-button
@@ -61,9 +64,12 @@
 </template>
 
 <script>
+
 export default {
   name: 'PanelTable',
   props: {},
+  components: {
+  },
   data() {
     return {
       search: '',

@@ -3,7 +3,7 @@
     <md-dialog :md-active="popup">
       <md-tabs md-dynamic-height md-alignment="fixed">
         <md-tab md-label="Create">
-          <CreateForm @formValid="popup = false"/>
+          <CreateForm @formValid="popup = false;$emit('closed');"/>
         </md-tab>
 
         <md-tab md-label="Load">
@@ -14,7 +14,7 @@
         <md-button
           v-if="!required"
           class="md-primary"
-          @click="popup=false"
+          @click="popup=false;$emit('closed');"
         >
           Close
         </md-button>

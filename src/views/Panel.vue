@@ -2,7 +2,7 @@
   <md-app md-mode="reveal">
     <md-app-drawer></md-app-drawer>
     <md-app-toolbar class="" md-elevation="1">
-      <md-button class="md-primary md-raised"
+      <md-button class="md-primary md-raised" @click="showPopup = true;"
         >New Project / Open Project</md-button
       >
 
@@ -14,6 +14,7 @@
 
     <md-app-content class="md-layout">
       <ProjectPopUp required></ProjectPopUp>
+      <ProjectPopUp v-if="showPopup" @closed="showPopup = false"></ProjectPopUp>
       <md-card class="md-layout-item md-size-45 md-small-size-45">
         <md-card-header>
           <div class="md-title">
@@ -56,9 +57,13 @@ export default {
   },
   data() {
     return {
+      showPopup: false,
     };
   },
   methods: {},
+  computed: {
+
+  },
 };
 </script>
 
