@@ -33,8 +33,8 @@ export default {
       items: [
         { command: 'Undo', shortcuts: 'Ctrl+z' },
         { command: 'Redo', shortcuts: 'Ctrl+y' },
-        { command: 'Add', shortcuts: 'X' },
-        { command: 'Remove', shortcuts: 'X' },
+        { command: 'Add', shortcuts: 'Ctrl+ArrowDown' },
+        { command: 'Remove', shortcuts: 'Delete' },
         { command: 'Move Up', shortcuts: 'X' },
         { command: 'Move Down', shortcuts: 'X' },
         { command: 'Copy', shortcuts: 'Ctrl+c' },

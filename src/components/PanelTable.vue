@@ -72,6 +72,7 @@ export default {
   },
   data() {
     return {
+      clipboard: [],
       search: '',
       filteredSearch: this.$store.state.combos,
       selected: [],
@@ -92,6 +93,9 @@ export default {
     newSentence() {
       this.$store.dispatch('NEW_SENTENCE');
     },
+    newManySentences() {
+      this.$store.dispatch('NEW_SENTENCE');
+    },
     remove() {
       let indexOffset = 0;
       this.selected.forEach((element) => {
@@ -103,14 +107,28 @@ export default {
 
     onkey(event) {
       // console.log(event);
-      if ((event.shiftKey && event.code === 'BackSpace') || event.code === 'Delete') {
+      if ((event.ctrlKey && event.code === 'Backspace') || event.code === 'Delete') {
         this.remove();
       }
-      if (event.shiftKey && event.code === 'ArrowDown') {
+      if (event.ctrlKey && event.code === 'ArrowDown') {
         this.newSentence();
       }
-      if (event.shiftKey && event.code === 'ArrowUp') {
-        // action
+      if (event.ctrlKey && event.code === 'ArrowUp') {
+        // TODO new sentence from top ?
+      }
+      if (event.code === 'ArrowUp' && this.selected.length === 1 && this.selected.index > 0) {
+        // TODO swap to lines ?
+      }
+      if (event.ctrlKey && event.code === 'KeyX' && this.lines.length > 0) {
+        this.selected = [this.lines[this.$store.state.combos.length - 1]];
+        this.remove();
+      }
+      if (event.ctrlKey && event.code === 'KeyC' && this.selected.length > 0) {
+        this.clipboard = this.selected;
+      }
+      if (event.ctrlKey && event.code === 'KeyV' && this.clipboard.length > 0) {
+        this.clipboard = this.selected;
+        this.clipboard.forEach((element) => this.$store.dispatch('NEW_SENTENCE_NON_EMPTY', { sentence: element.element.sentence, comboIndex: element.element.comboIndex }));
       }
     },
     increaseComboIndex(index, n) {
