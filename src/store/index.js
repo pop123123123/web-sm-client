@@ -24,6 +24,9 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
       state.project.video_urls = newVIDEOS;
     },
+    PUSH_SENTENCE(state, { sentence, comboIndex }) {
+      state.combos.push({ sentence, comboIndex });
+    },
     PUSH_EMPTY_SENTENCE(state) {
       state.combos.push({ sentence: '', comboIndex: 0 });
     },
@@ -42,6 +45,9 @@ export default new Vuex.Store({
     },
     NEW_SENTENCE(state) {
       state.commit('PUSH_EMPTY_SENTENCE');
+    },
+    NEW_SENTENCE_NON_EMPTY(state, { sentence, comboIndex }) {
+      state.commit('PUSH_SENTENCE', { sentence, comboIndex });
     },
     DELETE(state, id) {
       state.commit('REMOVE', id);
