@@ -19,7 +19,6 @@
       :search="search"
     >
       <template v-slot:item.element.sentence="props">
-
         <v-edit-dialog :return-value.sync="props.item.element.sentence">
           {{ props.item.element.sentence }}
           <template v-slot:input>
@@ -66,8 +65,10 @@
 <script>
 
 export default {
+
   name: 'PanelTable',
-  props: {},
+  props: {
+  },
   components: {
   },
   data() {
@@ -91,10 +92,10 @@ export default {
   },
   methods: {
     newSentence() {
-      this.$store.dispatch('NEW_SENTENCE');
+      this.$store.dispatch('NEW_EMPTY_SENTENCE');
     },
     newManySentences() {
-      this.$store.dispatch('NEW_SENTENCE');
+      this.$store.dispatch('NEW_EMPTY_SENTENCE');
     },
     remove() {
       let indexOffset = 0;
@@ -106,7 +107,6 @@ export default {
     },
 
     onkey(event) {
-      // console.log(event);
       if ((event.ctrlKey && event.code === 'Backspace') || event.code === 'Delete') {
         this.remove();
       }
@@ -114,21 +114,17 @@ export default {
         this.newSentence();
       }
       if (event.ctrlKey && event.code === 'ArrowUp') {
-        // TODO new sentence from top ?
-      }
-      if (event.code === 'ArrowUp' && this.selected.length === 1 && this.selected.index > 0) {
-        // TODO swap to lines ?
+        this.$store.dispatch('NEW_EMPTY_SENTENCE', 'top');
       }
       if (event.ctrlKey && event.code === 'KeyX' && this.lines.length > 0) {
         this.selected = [this.lines[this.$store.state.combos.length - 1]];
         this.remove();
       }
       if (event.ctrlKey && event.code === 'KeyC' && this.selected.length > 0) {
-        this.clipboard = this.selected;
+        this.copy();
       }
       if (event.ctrlKey && event.code === 'KeyV' && this.clipboard.length > 0) {
-        this.clipboard = this.selected;
-        this.clipboard.forEach((element) => this.$store.dispatch('NEW_SENTENCE_NON_EMPTY', { sentence: element.element.sentence, comboIndex: element.element.comboIndex }));
+        this.paste();
       }
     },
     increaseComboIndex(index, n) {
@@ -136,9 +132,38 @@ export default {
         this.$store.commit('CHANGE_COMBO_INDEX', { index, n });
       }
     },
+    copy() {
+      this.clipboard = this.selected;
+    },
+    paste() {
+      this.clipboard.forEach((element) => this.$store.dispatch('NEW_SENTENCE', { sentence: element.element.sentence, comboIndex: element.element.comboIndex }));
+    },
   },
   computed: {
     lines() {
+      switch (this.$store.state.menuAction) {
+        case 'Undo':
+          // TODO Undo()
+          break;
+        case 'Redo':
+          // TODO Redo()
+          break;
+        case 'Add':
+          this.newSentence();
+          break;
+        case 'Remove':
+          this.remove();
+          break;
+        case 'Copy':
+          this.copy();
+          break;
+        case 'Paste':
+          this.paste();
+          break;
+        default:
+          break;
+      }
+      this.$store.dispatch('MENU_ACTION', '');
       return this.$store.state.combos.map((element, index) => {
         let newElement = {};
         newElement = { element, index };
