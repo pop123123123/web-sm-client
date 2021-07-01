@@ -19,11 +19,18 @@
       class="elevation-1"
       :search="search"
     >
+<<<<<<< HEAD
       <template v-slot:item.element.sentence="props">
         <v-edit-dialog
           @save="save(props.item)"
           @open="editSentence = props.item.element.sentence"
         >
+=======
+
+      <!-- <template v-slot:item.element.sentence="props">
+
+        <v-edit-dialog :return-value.sync="props.item.element.sentence">
+>>>>>>> cb52de1 (first drag and droptable)
           {{ props.item.element.sentence }}
           <template v-slot:input>
             <v-text-field
@@ -34,6 +41,7 @@
               counter
             ></v-text-field>
           </template>
+
         </v-edit-dialog>
       </template>
 
@@ -45,7 +53,46 @@
         <v-btn @click="changeComboIndex(item.index, 1)" elevation="1" x-small
           >&gt;</v-btn
         >
+      </template> -->
+
+      <template v-slot:body="props">
+        <draggable :list="props.items" tag="tbody">
+          <tr v-for="(el, index) in props.items" :key="index">
+            <td/>
+            <td>
+              <v-edit-dialog :return-value.sync="el.element.sentence">
+                {{ el.element.sentence }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="el.element.sentence"
+                    :rules="[max25chars]"
+                    label="Edit"
+                    single-line
+                    counter
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </td>
+
+            <td>
+              <v-btn
+                @click="increaseComboIndex(el.index, -1)"
+                elevation="1"
+                x-small
+                >{{ left }}</v-btn
+              >
+              {{ el.element.comboIndex }}
+              <v-btn
+                @click="increaseComboIndex(el.index, 1)"
+                elevation="1"
+                x-small
+                >{{ right }}</v-btn
+              >
+            </td>
+          </tr>
+        </draggable>
       </template>
+
     </v-data-table>
 
     <md-card-actions>
@@ -69,12 +116,22 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import action from '@/store/action-types';
+=======
+import draggable from 'vuedraggable';
+>>>>>>> cb52de1 (first drag and droptable)
 
 export default {
   name: 'PanelTable',
   props: {},
+<<<<<<< HEAD
   components: {},
+=======
+  components: {
+    draggable,
+  },
+>>>>>>> cb52de1 (first drag and droptable)
   data() {
     return {
       action,
