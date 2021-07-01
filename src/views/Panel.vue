@@ -5,8 +5,7 @@
       <md-button class="md-primary md-raised" @click="showPopup = true;"
         >New Project / Open Project</md-button
       >
-
-      <Menu name="Action" />
+<Menu name="Action" />
       <h3 class="md-title" style="flex: 1"></h3>
       <md-button class="md-primary md-raised">Save</md-button>
       <md-button class="md-primary md-raised">Export</md-button>
@@ -24,7 +23,6 @@
 
         </md-card-header>
         <md-card-content>
-          {{$store.state.combos}}
           <PanelTable />
         </md-card-content>
       </md-card>
@@ -42,16 +40,16 @@
 
 <script>
 import Video from '@/components/Video.vue';
-import Menu from '@/components/Menu.vue';
 import PanelTable from '@/components/PanelTable.vue';
 import ProjectPopUp from '@/components/ProjectPopUp.vue';
+import Menu from '@/components/Menu.vue';
 
 export default {
   name: 'Panel',
   props: {},
   components: {
-    Video,
     Menu,
+    Video,
     PanelTable,
     ProjectPopUp,
   },

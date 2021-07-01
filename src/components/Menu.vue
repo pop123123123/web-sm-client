@@ -11,7 +11,7 @@
         <v-list-item
           v-for="(item, index) in items"
           :key="index"
-          @click="execute(index)"
+          @click="execute(item.command)"
         >
           <v-list-item-title>{{ item.command }}</v-list-item-title>
           <v-list-item-subtitle>{{ item.shortcuts }}</v-list-item-subtitle>
@@ -33,18 +33,16 @@ export default {
       items: [
         { command: 'Undo', shortcuts: 'Ctrl+z' },
         { command: 'Redo', shortcuts: 'Ctrl+y' },
-        { command: 'Add', shortcuts: 'Ctrl+ArrowDown' },
+        { command: 'Add', shortcuts: 'Ctrl+Arrow' },
         { command: 'Remove', shortcuts: 'Delete' },
-        { command: 'Move Up', shortcuts: 'X' },
-        { command: 'Move Down', shortcuts: 'X' },
         { command: 'Copy', shortcuts: 'Ctrl+c' },
         { command: 'Paste', shortcuts: 'Ctrl+v' },
       ],
     };
   },
   methods: {
-    execute(i) {
-      console.log(i);
+    execute(name) {
+      this.$store.dispatch('MENU_ACTION', name);
     },
   },
 };

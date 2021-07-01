@@ -13,6 +13,7 @@ export default new Vuex.Store({
       seed: null,
       video_urls: [],
     },
+    menuAction: '',
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -24,17 +25,23 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
       state.project.video_urls = newVIDEOS;
     },
-    PUSH_SENTENCE(state, { sentence, comboIndex }) {
+    [mutation.PUSH_SENTENCE](state, { sentence, comboIndex }) {
       state.combos.push({ sentence, comboIndex });
     },
-    PUSH_EMPTY_SENTENCE(state) {
+    [mutation.PUSH_EMPTY_SENTENCE](state) {
       state.combos.push({ sentence: '', comboIndex: 0 });
     },
-    REMOVE(state, index) {
+    [mutation.PUSH_TOP_EMPTY_SENTENCE](state) {
+      state.combos = [{ sentence: '', comboIndex: 0 }, ...state.combos];
+    },
+    [mutation.REMOVE](state, index) {
       state.combos.splice(index, 1);
     },
-    CHANGE_COMBO_INDEX(state, { index, n }) {
+    [mutation.CHANGE_COMBO_INDEX](state, { index, n }) {
       state.combos[index].comboIndex += n;
+    },
+    [mutation.CHANGE_MENU_ACTION](state, name) {
+      state.menuAction = name;
     },
   },
   actions: {
@@ -43,14 +50,21 @@ export default new Vuex.Store({
       state.commit('CHANGE_PROJECT_SEED', newProject.seed);
       state.commit('CHANGE_PROJECT_VIDEOS', newProject.video_urls);
     },
-    NEW_SENTENCE(state) {
-      state.commit('PUSH_EMPTY_SENTENCE');
+    NEW_EMPTY_SENTENCE(state, position) {
+      if (position === 'top') {
+        state.commit('PUSH_TOP_EMPTY_SENTENCE');
+      } else { // default
+        state.commit('PUSH_EMPTY_SENTENCE');
+      }
     },
-    NEW_SENTENCE_NON_EMPTY(state, { sentence, comboIndex }) {
+    NEW_SENTENCE(state, { sentence, comboIndex }) {
       state.commit('PUSH_SENTENCE', { sentence, comboIndex });
     },
     DELETE(state, id) {
       state.commit('REMOVE', id);
+    },
+    MENU_ACTION(state, name) {
+      state.commit('CHANGE_MENU_ACTION', name);
     },
   },
   modules: {
