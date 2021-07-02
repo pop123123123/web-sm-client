@@ -9,12 +9,12 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(item, index) in items"
+          v-for="(item, index) in commands"
           :key="index"
-          @click="execute(item.command)"
+          @click="execute(item.command);"
         >
           <v-list-item-title>{{ item.command }}</v-list-item-title>
-          <v-list-item-subtitle>{{ item.shortcuts }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ item.shortcut }}</v-list-item-subtitle>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -30,19 +30,40 @@ export default {
   },
   data() {
     return {
-      items: [
-        { command: 'Undo', shortcuts: 'Ctrl+z' },
-        { command: 'Redo', shortcuts: 'Ctrl+y' },
-        { command: 'Add', shortcuts: 'Ctrl+Arrow' },
-        { command: 'Remove', shortcuts: 'Delete' },
-        { command: 'Copy', shortcuts: 'Ctrl+c' },
-        { command: 'Paste', shortcuts: 'Ctrl+v' },
+      commands: [
+        { command: 'Undo', shortcut: 'Ctrl+z' },
+        { command: 'Redo', shortcut: 'Ctrl+y' },
+        { command: 'Add', shortcut: 'Ctrl+Arrow' },
+        { command: 'Remove', shortcut: 'Delete' },
+        { command: 'Copy', shortcut: 'Ctrl+c' },
+        { command: 'Paste', shortcut: 'Ctrl+v' },
       ],
     };
   },
   methods: {
     execute(name) {
-      this.$store.dispatch('MENU_ACTION', name);
+      switch (name) {
+        case 'Undo':
+          //
+          break;
+        case 'Redo':
+          //
+          break;
+        case 'Add':
+          this.$store.dispatch('NEW_EMPTY_SENTENCE', this.$store.state.segments.length);
+          break;
+        case 'Remove':
+          this.$store.dispatch('DELETE_SELECTED'); // TODO don't reset the visual selection on panelTable
+          break;
+        case 'Copy':
+          this.$store.dispatch('COPY');
+          break;
+        case 'Paste':
+          this.$store.dispatch('PASTE');
+          break;
+        default:
+          break;
+      }
     },
   },
 };
