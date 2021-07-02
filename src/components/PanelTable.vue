@@ -1,5 +1,9 @@
 <template>
-  <div class="table">
+  <div class="panelTable">
+    {{ $store.state.segments }}
+    {{ selected }}
+    {{ $store.state.selected }}
+    {{ $store.state.clipboard }}
     <v-text-field
       v-model="search"
       append-icon="mdi-magnify"
@@ -13,7 +17,7 @@
       :items="lines"
       item-key="index"
       show-select
-      :items-per-page="12"
+      :items-per-page="-1"
       :single-select="false"
       class="elevation-1"
       :search="search"
@@ -24,7 +28,6 @@
           <template v-slot:input>
             <v-text-field
               v-model="props.item.element.sentence"
-              :rules="[max25chars]"
               label="Edit"
               single-line
               counter
@@ -34,139 +37,109 @@
       </template>
 
       <template v-slot:item.element.comboIndex="{ item }">
-        <v-btn
-          @click="increaseComboIndex(item.index, -1)"
-          elevation="1"
-          x-small
-          >{{ left }}</v-btn
+        <v-btn @click="changeComboIndex(item.index, -1)" elevation="1" x-small
+          >&lt;</v-btn
         >
         {{ item.element.comboIndex }}
-        <v-btn
-          @click="increaseComboIndex(item.index, 1)"
-          elevation="1"
-          x-small
-          >{{ right }}</v-btn
+        <v-btn @click="changeComboIndex(item.index, 1)" elevation="1" x-small
+          >&gt;</v-btn
         >
       </template>
     </v-data-table>
 
     <md-card-actions>
-      <md-button class="md-raised md-primary" @click="newSentence"
+      <md-button
+        class="md-raised md-primary"
+        @click="$store.dispatch('NEW_EMPTY_SENTENCE', lines.length)"
         >Add</md-button
       >
-      <md-button class="md-raised md-primary" @click="remove">Delete</md-button>
-      <!-- <md-button v-else class="md-raised md-primary" disabled
-            >Delete</md-button
-          > -->
+      <md-button
+        class="md-raised md-primary"
+        @click="
+          $store.dispatch('DELETE_SELECTED');
+          selected = [];
+        "
+        >Delete</md-button
+      >
     </md-card-actions>
   </div>
 </template>
 
 <script>
-
 export default {
-
   name: 'PanelTable',
-  props: {
-  },
-  components: {
-  },
+  props: {},
+  components: {},
   data() {
     return {
       clipboard: [],
       search: '',
-      filteredSearch: this.$store.state.combos,
       selected: [],
-      max25chars: (v) => v.length <= 25 || 'Input too long!',
-      right: '>',
-      left: '<',
       headers: [
         {
           text: 'Sentence',
           align: 'start',
           value: 'element.sentence',
         },
-        { text: 'Index', value: 'element.comboIndex' },
+        { text: 'Index', value: 'element.comboIndex', width: '139px' },
       ],
     };
   },
   methods: {
-    newSentence() {
-      this.$store.dispatch('NEW_EMPTY_SENTENCE');
-    },
-    newManySentences() {
-      this.$store.dispatch('NEW_EMPTY_SENTENCE');
-    },
-    remove() {
-      let indexOffset = 0;
-      this.selected.forEach((element) => {
-        this.$store.dispatch('DELETE', element.index - indexOffset);
-        indexOffset += 1;
-      });
-      this.selected = [];
-    },
-
     onkey(event) {
-      if ((event.ctrlKey && event.code === 'Backspace') || event.code === 'Delete') {
-        this.remove();
-      }
-      if (event.ctrlKey && event.code === 'ArrowDown') {
-        this.newSentence();
-      }
-      if (event.ctrlKey && event.code === 'ArrowUp') {
-        this.$store.dispatch('NEW_EMPTY_SENTENCE', 'top');
-      }
-      if (event.ctrlKey && event.code === 'KeyX' && this.lines.length > 0) {
-        this.selected = [this.lines[this.$store.state.combos.length - 1]];
-        this.remove();
-      }
-      if (event.ctrlKey && event.code === 'KeyC' && this.selected.length > 0) {
-        this.copy();
-      }
-      if (event.ctrlKey && event.code === 'KeyV' && this.clipboard.length > 0) {
-        this.paste();
-      }
-    },
-    increaseComboIndex(index, n) {
-      if (!(n === -1 && this.$store.state.combos[index].comboIndex === 0)) {
-        this.$store.commit('CHANGE_COMBO_INDEX', { index, n });
-      }
-    },
-    copy() {
-      this.clipboard = this.selected;
-    },
-    paste() {
-      this.clipboard.forEach((element) => this.$store.dispatch('NEW_SENTENCE', { sentence: element.element.sentence, comboIndex: element.element.comboIndex }));
-    },
-  },
-  computed: {
-    lines() {
-      switch (this.$store.state.menuAction) {
-        case 'Undo':
-          // TODO Undo()
+      switch (event.code) {
+        case 'Backspace':
+          if (event.ctrlKey) {
+            this.$store.dispatch('DELETE_SELECTED');
+            this.selected = [];
+          }
           break;
-        case 'Redo':
-          // TODO Redo()
+        case 'Delete':
+          this.$store.dispatch('DELETE_SELECTED');
+          this.selected = [];
           break;
-        case 'Add':
-          this.newSentence();
+        case 'ArrowDown':
+          if (event.ctrlKey) {
+            this.$store.dispatch('NEW_EMPTY_SENTENCE', this.lines.length);
+          }
           break;
-        case 'Remove':
-          this.remove();
+        case 'ArrowUp':
+          if (event.ctrlKey) {
+            this.$store.dispatch('NEW_EMPTY_SENTENCE', 0);
+          }
           break;
-        case 'Copy':
-          this.copy();
+        case 'KeyX':
+          if (event.ctrlKey && this.lines.length > 0) {
+            // TODO bad indice selection
+            this.selected = this.lines[this.$store.state.segments.length - 1];
+            this.$store.dispatch('DELETE_SELECTED');
+            this.selected = [];
+          }
           break;
-        case 'Paste':
-          this.paste();
+        case 'KeyC':
+          if (event.ctrlKey && this.$store.state.selected.length > 0) {
+            this.$store.dispatch('COPY');
+          }
+          break;
+        case 'KeyV':
+          if (event.ctrlKey && this.$store.state.clipboard.length > 0) {
+            this.$store.dispatch('PASTE');
+          }
           break;
         default:
           break;
       }
-      this.$store.dispatch('MENU_ACTION', '');
-      return this.$store.state.combos.map((element, index) => {
-        let newElement = {};
-        newElement = { element, index };
+    },
+    changeComboIndex(row, n) {
+      if (this.$store.state.segments[row].comboIndex + n >= 0) {
+        this.$store.commit('CHANGE_COMBO_INDEX', { row, n });
+      }
+    },
+  },
+  computed: {
+    lines() {
+      return this.$store.state.segments.map((element, index) => {
+        const newElement = { element, index };
         return newElement;
       });
     },
@@ -176,6 +149,14 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.onkey);
+  },
+  watch: {
+    selected(newValue) {
+      this.$store.dispatch(
+        'CHANGE_SELECTION',
+        newValue.map((element) => element.index),
+      );
+    },
   },
 };
 </script>

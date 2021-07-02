@@ -2,18 +2,21 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import mutation from './mutation-types';
+import action from './action-types';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    combos: [{ sentence: 'Bonjour', comboIndex: 2 }],
+    segments: [],
     project: {
       name: null,
       seed: null,
       video_urls: [],
     },
     menuAction: '',
+    selected: [],
+    clipboard: [],
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -26,45 +29,80 @@ export default new Vuex.Store({
       state.project.video_urls = newVIDEOS;
     },
     [mutation.PUSH_SENTENCE](state, { sentence, comboIndex }) {
-      state.combos.push({ sentence, comboIndex });
+      state.segments.push({ sentence, comboIndex });
     },
     [mutation.PUSH_EMPTY_SENTENCE](state) {
-      state.combos.push({ sentence: '', comboIndex: 0 });
+      state.segments.push({ sentence: '', comboIndex: 0 });
     },
-    [mutation.PUSH_TOP_EMPTY_SENTENCE](state) {
-      state.combos = [{ sentence: '', comboIndex: 0 }, ...state.combos];
+    [mutation.PUSH_INDEX_EMPTY_SENTENCE](state, index) {
+      state.segments.splice(index, 0, { sentence: '', comboIndex: 0 });
     },
     [mutation.REMOVE](state, index) {
-      state.combos.splice(index, 1);
+      state.segments.splice(index, 1);
     },
-    [mutation.CHANGE_COMBO_INDEX](state, { index, n }) {
-      state.combos[index].comboIndex += n;
+    [mutation.CHANGE_COMBO_INDEX](state, { row, n }) {
+      state.segments[row].comboIndex += n;
     },
     [mutation.CHANGE_MENU_ACTION](state, name) {
       state.menuAction = name;
     },
+    [mutation.CHANGE_SELECTED](state, newSelected) {
+      state.selected = newSelected;
+    },
+    [mutation.COPY_SELECTED](state) {
+      state.clipboard = state.selected;
+    },
   },
   actions: {
-    CREATE_PROJECT(state, newProject) {
+    [action.CREATE_PROJECT](state, newProject) {
       state.commit('CHANGE_PROJECT_NAME', newProject.name);
       state.commit('CHANGE_PROJECT_SEED', newProject.seed);
       state.commit('CHANGE_PROJECT_VIDEOS', newProject.video_urls);
     },
-    NEW_EMPTY_SENTENCE(state, position) {
-      if (position === 'top') {
-        state.commit('PUSH_TOP_EMPTY_SENTENCE');
-      } else { // default
-        state.commit('PUSH_EMPTY_SENTENCE');
-      }
+    [action.command.NEW_EMPTY_SENTENCE](state, index) {
+      state.commit('PUSH_INDEX_EMPTY_SENTENCE', index);
     },
-    NEW_SENTENCE(state, { sentence, comboIndex }) {
+    [action.command.NEW_SENTENCE](state, { sentence, comboIndex }) {
       state.commit('PUSH_SENTENCE', { sentence, comboIndex });
     },
-    DELETE(state, id) {
+    [action.command.MULTIPLE_NEW_SENTENCE](state, indexList) {
+      indexList.forEach((index) => {
+        state.commit('PUSH_SENTENCE', { sentence: state.state.segments[index].sentence, comboIndex: state.state.segments[index].comboIndex });
+      });
+    },
+    [action.command.DELETE](state, id) {
       state.commit('REMOVE', id);
     },
-    MENU_ACTION(state, name) {
-      state.commit('CHANGE_MENU_ACTION', name);
+    [action.command.MULTIPLE_DELETE](state, indexList) {
+      let indexOffset = 0;
+      indexList.forEach((id) => {
+        state.commit('REMOVE', id - indexOffset);
+        indexOffset += 1;
+      });
+    },
+    [action.command.DELETE_SELECTED](state) {
+      if (state.state.selected.length > 1) {
+        state.dispatch('MULTIPLE_DELETE', state.state.selected);
+      } else {
+        state.dispatch('DELETE', state.state.selected[0]);
+      }
+    },
+    [action.CHANGE_SELECTION](state, newSelection) {
+      state.commit('CHANGE_SELECTED', newSelection);
+    },
+    [action.COPY](state) {
+      console.log('copi');
+      state.commit('COPY_SELECTED');
+    },
+    [action.PASTE](state) {
+      if (state.state.clipboard.length > 1) {
+        state.dispatch('MULTIPLE_NEW_SENTENCE', state.state.clipboard);
+      } else {
+        state.dispatch('NEW_SENTENCE', {
+          sentence: state.state.segments[state.state.clipboard[0]].sentence,
+          comboIndex: state.state.segments[state.state.clipboard[0]].comboIndex,
+        });
+      }
     },
   },
   modules: {
