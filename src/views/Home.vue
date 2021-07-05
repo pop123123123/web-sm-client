@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <ProjectPopUp required></ProjectPopUp>
+    <ProjectPopUp @closed=" $router.push(`/panel`)" required></ProjectPopUp>
   </div>
 </template>
 

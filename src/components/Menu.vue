@@ -5,7 +5,6 @@
     <v-menu offset-y min-width="250">
       <template v-slot:activator="{ on ,attrs}">
         <v-btn v-bind="attrs" v-on="on">{{ name }} </v-btn>
-        <!-- TODO change color of the button -->
       </template>
       <v-list>
         <v-list-item
