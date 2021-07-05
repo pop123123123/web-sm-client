@@ -40,8 +40,8 @@ export default new Vuex.Store({
     [mutation.REMOVE](state, index) {
       state.segments.splice(index, 1);
     },
-    [mutation.CHANGE_COMBO_INDEX](state, { row, n }) {
-      state.segments[row].comboIndex += n;
+    [mutation.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
+      state.segments[row].comboIndex = newComboIndex;
     },
     [mutation.CHANGE_MENU_ACTION](state, name) {
       state.menuAction = name;
@@ -55,56 +55,38 @@ export default new Vuex.Store({
   },
   actions: {
     [action.CREATE_PROJECT](state, newProject) {
-      state.commit('CHANGE_PROJECT_NAME', newProject.name);
-      state.commit('CHANGE_PROJECT_SEED', newProject.seed);
-      state.commit('CHANGE_PROJECT_VIDEOS', newProject.video_urls);
+      state.commit(mutation.CHANGE_PROJECT_NAME, newProject.name);
+      state.commit(mutation.CHANGE_PROJECT_SEED, newProject.seed);
+      state.commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
     },
     [action.command.NEW_EMPTY_SENTENCE](state, index) {
-      state.commit('PUSH_INDEX_EMPTY_SENTENCE', index);
+      state.commit(mutation.PUSH_INDEX_EMPTY_SENTENCE, index);
     },
-    [action.command.NEW_SENTENCE](state, { sentence, comboIndex }) {
-      state.commit('PUSH_SENTENCE', { sentence, comboIndex });
-    },
-    [action.command.MULTIPLE_NEW_SENTENCE](state, indexList) {
+    [action.command.NEW_SENTENCE](state, indexList) {
       indexList.forEach((index) => {
-        state.commit('PUSH_SENTENCE', { sentence: state.state.segments[index].sentence, comboIndex: state.state.segments[index].comboIndex });
+        state.commit(mutation.PUSH_EMPTY_SENTENCE,
+          {
+            sentence: state.state.segments[index].sentence,
+            comboIndex: state.state.segments[index].comboIndex,
+          });
       });
     },
-    [action.command.DELETE](state, id) {
-      state.commit('REMOVE', id);
-    },
-    [action.command.MULTIPLE_DELETE](state, indexList) {
+    [action.command.DELETE](state) {
       let indexOffset = 0;
-      indexList.forEach((id) => {
-        state.commit('REMOVE', id - indexOffset);
+      state.state.selected.forEach((id) => {
+        state.commit(mutation.REMOVE, id - indexOffset);
         indexOffset += 1;
       });
-    },
-    [action.command.DELETE_SELECTED](state) {
-      if (state.state.selected.length > 0) {
-        if (state.state.selected.length > 1) {
-          state.dispatch('MULTIPLE_DELETE', state.state.selected);
-        } else {
-          state.dispatch('DELETE', state.state.selected[0]);
-        }
-        state.commit('CHANGE_SELECTED', []);
-      }
+      state.commit(mutation.CHANGE_SELECTED, []);
     },
     [action.CHANGE_SELECTION](state, newSelection) {
-      state.commit('CHANGE_SELECTED', newSelection);
+      state.commit(mutation.CHANGE_SELECTED, newSelection);
     },
     [action.COPY](state) {
-      state.commit('COPY_SELECTED');
+      state.commit(mutation.COPY_SELECTED);
     },
     [action.PASTE](state) {
-      if (state.state.clipboard.length > 1) {
-        state.dispatch('MULTIPLE_NEW_SENTENCE', state.state.clipboard);
-      } else {
-        state.dispatch('NEW_SENTENCE', {
-          sentence: state.state.segments[state.state.clipboard[0]].sentence,
-          comboIndex: state.state.segments[state.state.clipboard[0]].comboIndex,
-        });
-      }
+      state.dispatch(action.command.NEW_SENTENCE, state.state.clipboard);
     },
   },
   modules: {

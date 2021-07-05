@@ -12,7 +12,7 @@
           :key="index"
           @click="execute(item.command);"
         >
-          <v-list-item-title>{{ item.command }}</v-list-item-title>
+          <v-list-item-title>{{ item.name }}</v-list-item-title>
           <v-list-item-subtitle>{{ item.shortcut }}</v-list-item-subtitle>
         </v-list-item>
       </v-list>
@@ -21,47 +21,31 @@
 </template>
 
 <script>
+import action from '@/store/action-types';
+
 export default {
   name: 'Menu',
-
   props: {
     name: String,
   },
   data() {
     return {
       commands: [
-        { command: 'Undo', shortcut: 'Ctrl+z' },
-        { command: 'Redo', shortcut: 'Ctrl+y' },
-        { command: 'Add', shortcut: 'Ctrl+Arrow' },
-        { command: 'Remove', shortcut: 'Delete' },
-        { command: 'Copy', shortcut: 'Ctrl+c' },
-        { command: 'Paste', shortcut: 'Ctrl+v' },
+        { name: 'Undo', command: 'COMMAND_UNDO', shortcut: 'Ctrl+z' },
+        { name: 'Redo', command: 'COMMAND_REDO', shortcut: 'Ctrl+y' },
+        { name: 'Add', command: 'COMMAND_ADD', shortcut: 'Ctrl+Arrow' },
+        { name: 'Remove', command: 'COMMAND_DELETE', shortcut: 'Delete' },
+        { name: 'Copy', command: 'COPY', shortcut: 'Ctrl+c' },
+        { name: 'Paste', command: 'PASTE', shortcut: 'Ctrl+v' },
       ],
     };
   },
   methods: {
-    execute(name) {
-      switch (name) {
-        case 'Undo':
-          //
-          break;
-        case 'Redo':
-          //
-          break;
-        case 'Add':
-          this.$store.dispatch('NEW_EMPTY_SENTENCE', this.$store.state.segments.length);
-          break;
-        case 'Remove':
-          this.$store.dispatch('DELETE_SELECTED'); // TODO don't reset the visual selection on panelTable
-          break;
-        case 'Copy':
-          this.$store.dispatch('COPY');
-          break;
-        case 'Paste':
-          this.$store.dispatch('PASTE');
-          break;
-        default:
-          break;
+    execute(command) {
+      if (command === 'COMMAND_ADD') {
+        this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, this.$store.state.segments.length);
+      } else {
+        this.$store.dispatch(command);
       }
     },
   },
