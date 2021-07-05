@@ -1,9 +1,5 @@
 <template>
   <div class="panelTable">
-    {{ $store.state.segments }}
-    {{ selected }}
-    {{ $store.state.selected }}
-    {{ $store.state.clipboard }}
     <v-text-field
       v-model="search"
       append-icon="mdi-magnify"
@@ -28,6 +24,7 @@
           <template v-slot:input>
             <v-text-field
               v-model="props.item.element.sentence"
+               :rules="[max25chars]"
               label="Edit"
               single-line
               counter
@@ -54,6 +51,7 @@
         >Add</md-button
       >
       <md-button
+        v-if="$store.state.selected.length > 0"
         class="md-raised md-primary"
         @click="
           $store.dispatch('DELETE_SELECTED');
@@ -61,6 +59,7 @@
         "
         >Delete</md-button
       >
+      <md-button v-else disabled class="md-raised">Delete</md-button>
     </md-card-actions>
   </div>
 </template>
@@ -72,7 +71,7 @@ export default {
   components: {},
   data() {
     return {
-      clipboard: [],
+      max25chars: (v) => v.length <= 25 || 'Warning: Long input is not recommended',
       search: '',
       selected: [],
       headers: [
@@ -106,14 +105,6 @@ export default {
         case 'ArrowUp':
           if (event.ctrlKey) {
             this.$store.dispatch('NEW_EMPTY_SENTENCE', 0);
-          }
-          break;
-        case 'KeyX':
-          if (event.ctrlKey && this.lines.length > 0) {
-            // TODO bad indice selection
-            this.selected = this.lines[this.$store.state.segments.length - 1];
-            this.$store.dispatch('DELETE_SELECTED');
-            this.selected = [];
           }
           break;
         case 'KeyC':

@@ -81,17 +81,19 @@ export default new Vuex.Store({
       });
     },
     [action.command.DELETE_SELECTED](state) {
-      if (state.state.selected.length > 1) {
-        state.dispatch('MULTIPLE_DELETE', state.state.selected);
-      } else {
-        state.dispatch('DELETE', state.state.selected[0]);
+      if (state.state.selected.length > 0) {
+        if (state.state.selected.length > 1) {
+          state.dispatch('MULTIPLE_DELETE', state.state.selected);
+        } else {
+          state.dispatch('DELETE', state.state.selected[0]);
+        }
+        state.commit('CHANGE_SELECTED', []);
       }
     },
     [action.CHANGE_SELECTION](state, newSelection) {
       state.commit('CHANGE_SELECTED', newSelection);
     },
     [action.COPY](state) {
-      console.log('copi');
       state.commit('COPY_SELECTED');
     },
     [action.PASTE](state) {

@@ -11,7 +11,6 @@
     </md-app-toolbar>
 
     <md-app-content class="md-layout">
-      <ProjectPopUp required></ProjectPopUp>
       <ProjectPopUp v-if="showPopup" @closed="showPopup = false"></ProjectPopUp>
       <md-card class="md-layout-item md-size-45 md-small-size-45">
         <md-card-header>
