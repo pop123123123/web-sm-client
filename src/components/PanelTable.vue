@@ -14,7 +14,6 @@
       item-key="index"
       show-select
       :items-per-page="-1"
-      :single-select="false"
       class="elevation-1"
       :search="search"
     >
@@ -24,7 +23,7 @@
           <template v-slot:input>
             <v-text-field
               v-model="props.item.element.sentence"
-               :rules="[max25chars]"
+              :rules="[max25chars]"
               label="Edit"
               single-line
               counter
@@ -47,30 +46,34 @@
     <md-card-actions>
       <md-button
         class="md-raised md-primary"
-        @click="$store.dispatch('NEW_EMPTY_SENTENCE', lines.length)"
+        @click="$store.dispatch(action.command.NEW_EMPTY_SENTENCE, lines.length)"
         >Add</md-button
       >
       <md-button
-        v-if="$store.state.selected.length > 0"
+        :disabled="$store.state.selected.length <= 0"
         class="md-raised md-primary"
         @click="
-          $store.dispatch('DELETE_SELECTED');
+          $store.dispatch(action.command.DELETE);
           selected = [];
         "
         >Delete</md-button
       >
-      <md-button v-else disabled class="md-raised">Delete</md-button>
     </md-card-actions>
   </div>
 </template>
 
 <script>
+import action from '@/store/action-types';
+import mutation from '@/store/mutation-types';
+
 export default {
   name: 'PanelTable',
   props: {},
   components: {},
   data() {
     return {
+      action,
+      mutation,
       max25chars: (v) => v.length <= 25 || 'Warning: Long input is not recommended',
       search: '',
       selected: [],
@@ -89,32 +92,35 @@ export default {
       switch (event.code) {
         case 'Backspace':
           if (event.ctrlKey) {
-            this.$store.dispatch('DELETE_SELECTED');
+            this.$store.dispatch(action.command.DELETE);
             this.selected = [];
           }
           break;
         case 'Delete':
-          this.$store.dispatch('DELETE_SELECTED');
+          this.$store.dispatch(action.command.DELETE);
           this.selected = [];
           break;
         case 'ArrowDown':
           if (event.ctrlKey) {
-            this.$store.dispatch('NEW_EMPTY_SENTENCE', this.lines.length);
+            this.$store.dispatch(
+              action.command.NEW_EMPTY_SENTENCE,
+              this.lines.length,
+            );
           }
           break;
         case 'ArrowUp':
           if (event.ctrlKey) {
-            this.$store.dispatch('NEW_EMPTY_SENTENCE', 0);
+            this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, 0);
           }
           break;
         case 'KeyC':
           if (event.ctrlKey && this.$store.state.selected.length > 0) {
-            this.$store.dispatch('COPY');
+            this.$store.dispatch(action.COPY);
           }
           break;
         case 'KeyV':
           if (event.ctrlKey && this.$store.state.clipboard.length > 0) {
-            this.$store.dispatch('PASTE');
+            this.$store.dispatch(action.PASTE);
           }
           break;
         default:
@@ -122,17 +128,18 @@ export default {
       }
     },
     changeComboIndex(row, n) {
-      if (this.$store.state.segments[row].comboIndex + n >= 0) {
-        this.$store.commit('CHANGE_COMBO_INDEX', { row, n });
+      const actualComboIndex = this.$store.state.segments[row].comboIndex;
+      if (actualComboIndex + n >= 0) {
+        this.$store.commit(mutation.CHANGE_INDEX_COMBO, {
+          row,
+          newComboIndex: actualComboIndex + n,
+        });
       }
     },
   },
   computed: {
     lines() {
-      return this.$store.state.segments.map((element, index) => {
-        const newElement = { element, index };
-        return newElement;
-      });
+      return this.$store.state.segments.map((element, index) => ({ element, index }));
     },
   },
   created() {
@@ -144,7 +151,7 @@ export default {
   watch: {
     selected(newValue) {
       this.$store.dispatch(
-        'CHANGE_SELECTION',
+        action.CHANGE_SELECTION,
         newValue.map((element) => element.index),
       );
     },

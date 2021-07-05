@@ -15,7 +15,7 @@
       <md-card class="md-layout-item md-size-45 md-small-size-45">
         <md-card-header>
           <div class="md-title">{{ $store.state.project.name }}</div>
-            <div class="md-subhead">Seed:{{ $store.state.project.seed }}</div>
+          <div class="md-subhead">Seed:{{ $store.state.project.seed }}</div>
         </md-card-header>
         <md-card-content>
           <PanelTable />
@@ -54,9 +54,7 @@ export default {
     };
   },
   methods: {},
-  computed: {
-
-  },
+  computed: {},
 };
 </script>
 
