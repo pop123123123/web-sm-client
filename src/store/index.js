@@ -64,7 +64,6 @@ export default new Vuex.Store({
     },
     [action.command.NEW_EMPTY_SENTENCE](state, index) {
       let realIndex;
-      console.log(index);
       if (index === undefined) {
         realIndex = state.state.segments.length;
       } else {
