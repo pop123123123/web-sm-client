@@ -12,6 +12,8 @@
       @item-selected="onItemSelected"
       @toggle-select-all="selectAll"
       :headers="headers"
+      @sorted="saveOrder"
+      v-sortable-data-table
       :items="lines"
       item-key="index"
       show-select
@@ -19,18 +21,11 @@
       class="elevation-1"
       :search="search"
     >
-<<<<<<< HEAD
       <template v-slot:item.element.sentence="props">
         <v-edit-dialog
           @save="save(props.item)"
           @open="editSentence = props.item.element.sentence"
         >
-=======
-
-      <!-- <template v-slot:item.element.sentence="props">
-
-        <v-edit-dialog :return-value.sync="props.item.element.sentence">
->>>>>>> cb52de1 (first drag and droptable)
           {{ props.item.element.sentence }}
           <template v-slot:input>
             <v-text-field
@@ -120,7 +115,11 @@
 import action from '@/store/action-types';
 =======
 import draggable from 'vuedraggable';
+<<<<<<< HEAD
 >>>>>>> cb52de1 (first drag and droptable)
+=======
+import Sortable from 'sortablejs';
+>>>>>>> 65b3521 (add first sort (bad display))
 
 export default {
   name: 'PanelTable',
@@ -149,6 +148,7 @@ export default {
     };
   },
   methods: {
+<<<<<<< HEAD
     selectAll(all) {
       if (all.value) {
         all.items.forEach((item) => this.$store.dispatch(
@@ -159,6 +159,14 @@ export default {
           action.CHANGE_SELECTION, { newIndex: item.index, mode: 'remove' },
         ));
       }
+=======
+    saveOrder(event) {
+      const movedItem = this.$store.state.combos.splice(event.oldIndex, 1)[0];
+      this.$store.state.combos.splice(event.newIndex, 0, movedItem);
+    },
+    newSentence() {
+      this.$store.dispatch('NEW_SENTENCE');
+>>>>>>> 65b3521 (add first sort (bad display))
     },
     onItemSelected(sel) {
       if (sel.value) {
@@ -226,6 +234,19 @@ export default {
           newComboIndex: actualComboIndex + n,
         });
       }
+    },
+  },
+  directives: {
+    sortableDataTable: {
+      bind(el, binding, vnode) {
+        const options = {
+          animation: 150,
+          onUpdate(event) {
+            vnode.child.$emit('sorted', event);
+          },
+        };
+        Sortable.create(el.getElementsByTagName('tbody')[0], options);
+      },
     },
   },
   computed: {
