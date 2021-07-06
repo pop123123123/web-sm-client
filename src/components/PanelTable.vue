@@ -1,5 +1,6 @@
 <template>
   <div class="panelTable">
+    {{$store.state.segments}}
     <v-text-field
       v-model="search"
       append-icon="mdi-magnify"
@@ -18,11 +19,14 @@
       :search="search"
     >
       <template v-slot:item.element.sentence="props">
-        <v-edit-dialog :return-value.sync="props.item.element.sentence">
+        <v-edit-dialog
+          @save="save(props.item)"
+          @open="editSentence = props.item.element.sentence"
+        >
           {{ props.item.element.sentence }}
           <template v-slot:input>
             <v-text-field
-              v-model="props.item.element.sentence"
+              v-model="editSentence"
               :rules="[max25chars]"
               label="Edit"
               single-line
@@ -46,7 +50,9 @@
     <md-card-actions>
       <md-button
         class="md-raised md-primary"
-        @click="$store.dispatch(action.command.NEW_EMPTY_SENTENCE, lines.length)"
+        @click="
+          $store.dispatch(action.command.NEW_EMPTY_SENTENCE, lines.length)
+        "
         >Add</md-button
       >
       <md-button
@@ -64,7 +70,6 @@
 
 <script>
 import action from '@/store/action-types';
-import mutation from '@/store/mutation-types';
 
 export default {
   name: 'PanelTable',
@@ -73,7 +78,7 @@ export default {
   data() {
     return {
       action,
-      mutation,
+      editSentence: '',
       max25chars: (v) => v.length <= 25 || 'Warning: Long input is not recommended',
       search: '',
       selected: [],
@@ -88,6 +93,12 @@ export default {
     };
   },
   methods: {
+    save(newValue) {
+      this.$store.dispatch(action.command.TRY_CHANGE_SENTENCE, {
+        item: newValue,
+        editSentence: this.editSentence,
+      });
+    },
     onkey(event) {
       switch (event.code) {
         case 'Backspace':
@@ -130,7 +141,7 @@ export default {
     changeComboIndex(row, n) {
       const actualComboIndex = this.$store.state.segments[row].comboIndex;
       if (actualComboIndex + n >= 0) {
-        this.$store.commit(mutation.CHANGE_INDEX_COMBO, {
+        this.$store.commit(action.command.CHANGE_COMBO_INDEX, {
           row,
           newComboIndex: actualComboIndex + n,
         });
@@ -139,7 +150,10 @@ export default {
   },
   computed: {
     lines() {
-      return this.$store.state.segments.map((element, index) => ({ element, index }));
+      return this.$store.state.segments.map((element, index) => ({
+        element,
+        index,
+      }));
     },
   },
   created() {
