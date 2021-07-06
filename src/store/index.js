@@ -52,6 +52,9 @@ export default new Vuex.Store({
     [mutation.COPY_SELECTED](state) {
       state.clipboard = state.selected;
     },
+    [mutation.CHANGE_SENTENCE](state, { index, newSentence }) {
+      state.segments[index].sentence = newSentence;
+    },
   },
   actions: {
     [action.CREATE_PROJECT](state, newProject) {
@@ -60,7 +63,14 @@ export default new Vuex.Store({
       state.commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
     },
     [action.command.NEW_EMPTY_SENTENCE](state, index) {
-      state.commit(mutation.PUSH_INDEX_EMPTY_SENTENCE, index);
+      let realIndex;
+      console.log(index);
+      if (index === undefined) {
+        realIndex = state.state.segments.length;
+      } else {
+        realIndex = index;
+      }
+      state.commit(mutation.PUSH_INDEX_EMPTY_SENTENCE, realIndex);
     },
     [action.command.NEW_SENTENCE](state, indexList) {
       indexList.forEach((index) => {
@@ -87,6 +97,12 @@ export default new Vuex.Store({
     },
     [action.PASTE](state) {
       state.dispatch(action.command.NEW_SENTENCE, state.state.clipboard);
+    },
+    [action.command.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
+      state.commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });
+    },
+    [action.command.TRY_CHANGE_SENTENCE](state, { item, editSentence }) {
+      state.commit(mutation.CHANGE_SENTENCE, { index: item.index, newSentence: editSentence });
     },
   },
   modules: {

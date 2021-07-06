@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import action from '@/store/action-types';
 
 export default {
   name: 'Menu',
@@ -33,7 +32,7 @@ export default {
       commands: [
         { name: 'Undo', command: 'COMMAND_UNDO', shortcut: 'Ctrl+z' },
         { name: 'Redo', command: 'COMMAND_REDO', shortcut: 'Ctrl+y' },
-        { name: 'Add', command: 'COMMAND_ADD', shortcut: 'Ctrl+Arrow' },
+        { name: 'Add', command: 'COMMAND_NEW_EMPTY_SENTENCE', shortcut: 'Ctrl+Arrow' },
         { name: 'Remove', command: 'COMMAND_DELETE', shortcut: 'Delete' },
         { name: 'Copy', command: 'COPY', shortcut: 'Ctrl+c' },
         { name: 'Paste', command: 'PASTE', shortcut: 'Ctrl+v' },
@@ -42,11 +41,7 @@ export default {
   },
   methods: {
     execute(command) {
-      if (command === 'COMMAND_ADD') {
-        this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, this.$store.state.segments.length);
-      } else {
-        this.$store.dispatch(command);
-      }
+      this.$store.dispatch(command);
     },
   },
 };
