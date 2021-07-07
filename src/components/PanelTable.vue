@@ -8,7 +8,9 @@
       hide-details
     ></v-text-field>
     <v-data-table
-      v-model="selected"
+      :value="selected"
+      @item-selected="onItemSelected"
+      @toggle-select-all="selectAll"
       :headers="headers"
       :items="lines"
       item-key="index"
@@ -59,7 +61,6 @@
         class="md-raised md-primary"
         @click="
           $store.dispatch(action.command.DELETE);
-          selected = [];
         "
         >Delete</md-button
       >
@@ -80,7 +81,6 @@ export default {
       editSentence: '',
       max25chars: (v) => v.length <= 25 || 'Warning: Long input is not recommended',
       search: '',
-      selected: [],
       headers: [
         {
           text: 'Sentence',
@@ -92,10 +92,34 @@ export default {
     };
   },
   methods: {
+    selectAll(all) {
+      if (all.value) {
+        all.items.forEach((item) => this.$store.dispatch(
+          action.CHANGE_SELECTION, { newIndex: item.index, mode: 'add' },
+        ));
+      } else {
+        all.items.forEach((item) => this.$store.dispatch(
+          action.CHANGE_SELECTION, { newIndex: item.index, mode: 'remove' },
+        ));
+      }
+    },
+    onItemSelected(sel) {
+      if (sel.value) {
+        this.$store.dispatch(
+          action.CHANGE_SELECTION,
+          { newIndex: sel.item.index, mode: 'add' },
+        );
+      } else {
+        this.$store.dispatch(
+          action.CHANGE_SELECTION,
+          { newIndex: sel.item.index, mode: 'remove' },
+        );
+      }
+    },
     save(newValue) {
-      this.$store.dispatch(action.command.TRY_CHANGE_SENTENCE, {
-        item: newValue,
-        editSentence: this.editSentence,
+      this.$store.dispatch(action.command.CHANGE_SENTENCE, {
+        index: newValue.index,
+        newSentence: this.editSentence,
       });
     },
     onkey(event) {
@@ -154,6 +178,13 @@ export default {
         index,
       }));
     },
+    selected() {
+      const highlighted = [];
+      this.$store.state.selected.forEach((element) => {
+        highlighted.push(this.lines[element]);
+      });
+      return highlighted;
+    },
   },
   created() {
     window.addEventListener('keydown', this.onkey);
@@ -161,14 +192,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener('keydown', this.onkey);
   },
-  watch: {
-    selected(newValue) {
-      this.$store.dispatch(
-        action.CHANGE_SELECTION,
-        newValue.map((element) => element.index),
-      );
-    },
-  },
+  watch: {},
 };
 </script>
 

@@ -46,8 +46,14 @@ export default new Vuex.Store({
     [mutation.CHANGE_MENU_ACTION](state, name) {
       state.menuAction = name;
     },
-    [mutation.CHANGE_SELECTED](state, newSelected) {
-      state.selected = newSelected;
+    [mutation.ADD_SELECTED](state, newSelected) {
+      state.selected.push(newSelected);
+    },
+    [mutation.REMOVE_SELECTED](state, index) {
+      state.selected.splice(index, 1);
+    },
+    [mutation.RESET_SELECTED](state) {
+      state.selected = [];
     },
     [mutation.COPY_SELECTED](state) {
       state.clipboard = state.selected;
@@ -86,10 +92,17 @@ export default new Vuex.Store({
         state.commit(mutation.REMOVE, id - indexOffset);
         indexOffset += 1;
       });
-      state.commit(mutation.CHANGE_SELECTED, []);
+      state.commit(mutation.RESET_SELECTED);
     },
-    [action.CHANGE_SELECTION](state, newSelection) {
-      state.commit(mutation.CHANGE_SELECTED, newSelection);
+    [action.CHANGE_SELECTION](state, { newIndex, mode }) {
+      if (mode === 'add') {
+        state.commit(mutation.ADD_SELECTED, newIndex);
+      } else {
+        state.commit(
+          mutation.REMOVE_SELECTED,
+          state.state.selected.findIndex((element) => element === newIndex),
+        );
+      }
     },
     [action.COPY](state) {
       state.commit(mutation.COPY_SELECTED);
@@ -100,8 +113,8 @@ export default new Vuex.Store({
     [action.command.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
       state.commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });
     },
-    [action.command.TRY_CHANGE_SENTENCE](state, { item, editSentence }) {
-      state.commit(mutation.CHANGE_SENTENCE, { index: item.index, newSentence: editSentence });
+    [action.command.CHANGE_SENTENCE](state, { index, newSentence }) {
+      state.commit(mutation.CHANGE_SENTENCE, { index, newSentence });
     },
   },
   modules: {
