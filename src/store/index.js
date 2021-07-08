@@ -4,6 +4,16 @@ import Vuex from 'vuex';
 import mutation from './mutation-types';
 import action from './action-types';
 
+function selectionOffset(state, targetIndex, modeAdd) {
+  if (state.selected.length > 0) {
+    state.selected.forEach((element, index) => {
+      if (targetIndex <= element) {
+        state.selected[index] += (modeAdd * 2 - 1);
+      }
+    });
+  }
+}
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -29,9 +39,11 @@ export default new Vuex.Store({
     },
     [mutation.NEW_SENTENCE](state, { element: { sentence, comboIndex }, index }) {
       state.segments.splice(index, 0, { sentence, comboIndex });
+      selectionOffset(state, index, 1);
     },
     [mutation.REMOVE](state, index) {
       state.segments.splice(index, 1);
+      selectionOffset(state, index, 0);
     },
     [mutation.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
       state.segments[row].comboIndex = newComboIndex;
@@ -52,19 +64,6 @@ export default new Vuex.Store({
     [mutation.CHANGE_SENTENCE](state, { index, newSentence }) {
       state.segments[index].sentence = newSentence;
     },
-    [mutation.EVALUATE_SELECTED](state, { targetIndex, mode }) {
-      if (state.selected.length > 0) {
-        state.selected.forEach((element, index) => {
-          if (targetIndex < element) {
-            if (mode === 'remove') {
-              state.selected[index] += -1;
-            } if (mode === 'add') {
-              state.selected[index] += 1;
-            }
-          }
-        });
-      }
-    },
   },
   actions: {
     [action.CREATE_PROJECT]({ commit }, newProject) {
@@ -73,33 +72,30 @@ export default new Vuex.Store({
       commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
     },
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
-      context.dispatch(action.PRE_PUSH, { element: {}, index });
+      context.commit(mutation.NEW_SENTENCE, { element: { sentence: '', comboIndex: 0 }, index });
     },
     [action.command.NEW_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
-        context.dispatch(action.PRE_PUSH,
-          {
-            element:
-            {
-              sentence: context.state.segments[index].sentence,
-              comboIndex: context.state.segments[index].comboIndex,
-            },
-          });
+        context.commit(mutation.NEW_SENTENCE, {
+          element: {
+            sentence: context.state.segments[index].sentence,
+            comboIndex: context.state.segments[index].comboIndex,
+          },
+          index: context.state.segments.length,
+        });
       });
     },
     [action.PRE_PUSH]({ commit, state }, { element: { sentence, comboIndex }, index }) {
       commit(mutation.NEW_SENTENCE, { element: { sentence: sentence ?? '', comboIndex: comboIndex ?? 0 }, index: index ?? state.segments.length });
-      commit(mutation.EVALUATE_SELECTED, { targetIndex: index, mode: 'add' });
     },
     [action.command.DELETE]({ commit, state }) {
       state.selected.forEach((id, index) => {
         commit(mutation.REMOVE, id - index);
-        commit(mutation.EVALUATE_SELECTED, { targetIndex: id - index, mode: 'remove' });
       });
       commit(mutation.RESET_SELECTED);
     },
-    [action.CHANGE_SELECTION]({ commit, state }, { newIndex, mode }) {
-      if (mode === 'add') {
+    [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
+      if (modeAdd) {
         commit(mutation.ADD_SELECTED, newIndex);
       } else {
         commit(

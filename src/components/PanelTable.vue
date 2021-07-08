@@ -1,5 +1,6 @@
 <template>
   <div class="panelTable">
+    {{ $store.state.selected }}
     <v-text-field
       v-model="search"
       append-icon="mdi-magnify"
@@ -9,6 +10,7 @@
     ></v-text-field>
     <v-data-table
       :value="selected"
+      hide-default-footer
       @item-selected="onItemSelected"
       @toggle-select-all="selectAll"
       :headers="headers"
@@ -51,17 +53,13 @@
     <md-card-actions>
       <md-button
         class="md-raised md-primary"
-        @click="
-          $store.dispatch(action.command.NEW_EMPTY_SENTENCE)
-        "
+        @click="$store.dispatch(action.command.NEW_EMPTY_SENTENCE)"
         >Add</md-button
       >
       <md-button
         :disabled="$store.state.selected.length <= 0"
         class="md-raised md-primary"
-        @click="
-          $store.dispatch(action.command.DELETE);
-        "
+        @click="$store.dispatch(action.command.DELETE)"
         >Delete</md-button
       >
     </md-card-actions>
@@ -93,14 +91,20 @@ export default {
   },
   methods: {
     selectAll(all) {
-      const mode = all.value ? 'add' : 'remove';
-      all.items.forEach((item) => this.$store.dispatch(
-        action.CHANGE_SELECTION, { newIndex: item.index, mode },
-      ));
+      all.items.forEach((item) => {
+        if (!all.value || !this.$store.state.selected.includes(item.index)) {
+          this.$store.dispatch(action.CHANGE_SELECTION, {
+            newIndex: item.index,
+            modeAdd: all.value,
+          });
+        }
+      });
     },
     onItemSelected(sel) {
-      const mode = sel.value ? 'add' : 'remove';
-      this.$store.dispatch(action.CHANGE_SELECTION, { newIndex: sel.item.index, mode });
+      this.$store.dispatch(action.CHANGE_SELECTION, {
+        newIndex: sel.item.index,
+        modeAdd: sel.value,
+      });
     },
     save(newValue) {
       this.$store.dispatch(action.command.CHANGE_SENTENCE, {
@@ -113,12 +117,10 @@ export default {
         case 'Backspace':
           if (event.ctrlKey) {
             this.$store.dispatch(action.command.DELETE);
-            this.selected = [];
           }
           break;
         case 'Delete':
           this.$store.dispatch(action.command.DELETE);
-          this.selected = [];
           break;
         case 'ArrowDown':
           if (event.ctrlKey) {
