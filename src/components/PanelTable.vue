@@ -52,7 +52,7 @@
       <md-button
         class="md-raised md-primary"
         @click="
-          $store.dispatch(action.command.NEW_EMPTY_SENTENCE, lines.length)
+          $store.dispatch(action.command.NEW_EMPTY_SENTENCE)
         "
         >Add</md-button
       >
@@ -93,28 +93,14 @@ export default {
   },
   methods: {
     selectAll(all) {
-      if (all.value) {
-        all.items.forEach((item) => this.$store.dispatch(
-          action.CHANGE_SELECTION, { newIndex: item.index, mode: 'add' },
-        ));
-      } else {
-        all.items.forEach((item) => this.$store.dispatch(
-          action.CHANGE_SELECTION, { newIndex: item.index, mode: 'remove' },
-        ));
-      }
+      const mode = all.value ? 'add' : 'remove';
+      all.items.forEach((item) => this.$store.dispatch(
+        action.CHANGE_SELECTION, { newIndex: item.index, mode },
+      ));
     },
     onItemSelected(sel) {
-      if (sel.value) {
-        this.$store.dispatch(
-          action.CHANGE_SELECTION,
-          { newIndex: sel.item.index, mode: 'add' },
-        );
-      } else {
-        this.$store.dispatch(
-          action.CHANGE_SELECTION,
-          { newIndex: sel.item.index, mode: 'remove' },
-        );
-      }
+      const mode = sel.value ? 'add' : 'remove';
+      this.$store.dispatch(action.CHANGE_SELECTION, { newIndex: sel.item.index, mode });
     },
     save(newValue) {
       this.$store.dispatch(action.command.CHANGE_SENTENCE, {
@@ -179,11 +165,7 @@ export default {
       }));
     },
     selected() {
-      const highlighted = [];
-      this.$store.state.selected.forEach((element) => {
-        highlighted.push(this.lines[element]);
-      });
-      return highlighted;
+      return this.$store.state.selected.map((element) => this.lines[element]);
     },
   },
   created() {

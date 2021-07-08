@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import action from '@/store/action-types';
 
 export default {
   name: 'Menu',
@@ -30,12 +31,12 @@ export default {
   data() {
     return {
       commands: [
-        { name: 'Undo', command: 'COMMAND_UNDO', shortcut: 'Ctrl+z' },
-        { name: 'Redo', command: 'COMMAND_REDO', shortcut: 'Ctrl+y' },
-        { name: 'Add', command: 'COMMAND_NEW_EMPTY_SENTENCE', shortcut: 'Ctrl+Arrow' },
-        { name: 'Remove', command: 'COMMAND_DELETE', shortcut: 'Delete' },
-        { name: 'Copy', command: 'COPY', shortcut: 'Ctrl+c' },
-        { name: 'Paste', command: 'PASTE', shortcut: 'Ctrl+v' },
+        { name: 'Undo', command: action.command.UNDO, shortcut: 'Ctrl+z' },
+        { name: 'Redo', command: action.command.REDO, shortcut: 'Ctrl+y' },
+        { name: 'Add', command: action.command.NEW_EMPTY_SENTENCE, shortcut: 'Ctrl+Arrow' },
+        { name: 'Remove', command: action.command.DELETE, shortcut: 'Delete' },
+        { name: 'Copy', command: action.COPY, shortcut: 'Ctrl+c' },
+        { name: 'Paste', command: action.PASTE, shortcut: 'Ctrl+v' },
       ],
     };
   },

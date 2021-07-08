@@ -14,7 +14,6 @@ export default new Vuex.Store({
       seed: null,
       video_urls: [],
     },
-    menuAction: '',
     selected: [],
     clipboard: [],
   },
@@ -28,23 +27,14 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
       state.project.video_urls = newVIDEOS;
     },
-    [mutation.PUSH_SENTENCE](state, { sentence, comboIndex }) {
-      state.segments.push({ sentence, comboIndex });
-    },
-    [mutation.PUSH_EMPTY_SENTENCE](state) {
-      state.segments.push({ sentence: '', comboIndex: 0 });
-    },
-    [mutation.PUSH_INDEX_EMPTY_SENTENCE](state, index) {
-      state.segments.splice(index, 0, { sentence: '', comboIndex: 0 });
+    [mutation.NEW_SENTENCE](state, { element: { sentence, comboIndex }, index }) {
+      state.segments.splice(index, 0, { sentence, comboIndex });
     },
     [mutation.REMOVE](state, index) {
       state.segments.splice(index, 1);
     },
     [mutation.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
       state.segments[row].comboIndex = newComboIndex;
-    },
-    [mutation.CHANGE_MENU_ACTION](state, name) {
-      state.menuAction = name;
     },
     [mutation.ADD_SELECTED](state, newSelected) {
       state.selected.push(newSelected);
@@ -56,65 +46,79 @@ export default new Vuex.Store({
       state.selected = [];
     },
     [mutation.COPY_SELECTED](state) {
-      state.clipboard = state.selected;
+      state.clipboard = [];
+      state.selected.forEach((element) => state.clipboard.push(element));
     },
     [mutation.CHANGE_SENTENCE](state, { index, newSentence }) {
       state.segments[index].sentence = newSentence;
     },
+    [mutation.EVALUATE_SELECTED](state, { targetIndex, mode }) {
+      if (state.selected.length > 0) {
+        state.selected.forEach((element, index) => {
+          if (targetIndex < element) {
+            if (mode === 'remove') {
+              state.selected[index] += -1;
+            } if (mode === 'add') {
+              state.selected[index] += 1;
+            }
+          }
+        });
+      }
+    },
   },
   actions: {
-    [action.CREATE_PROJECT](state, newProject) {
-      state.commit(mutation.CHANGE_PROJECT_NAME, newProject.name);
-      state.commit(mutation.CHANGE_PROJECT_SEED, newProject.seed);
-      state.commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
+    [action.CREATE_PROJECT]({ commit }, newProject) {
+      commit(mutation.CHANGE_PROJECT_NAME, newProject.name);
+      commit(mutation.CHANGE_PROJECT_SEED, newProject.seed);
+      commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
     },
-    [action.command.NEW_EMPTY_SENTENCE](state, index) {
-      let realIndex;
-      if (index === undefined) {
-        realIndex = state.state.segments.length;
-      } else {
-        realIndex = index;
-      }
-      state.commit(mutation.PUSH_INDEX_EMPTY_SENTENCE, realIndex);
+    [action.command.NEW_EMPTY_SENTENCE](context, index) {
+      context.dispatch(action.PRE_PUSH, { element: {}, index });
     },
-    [action.command.NEW_SENTENCE](state, indexList) {
+    [action.command.NEW_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
-        state.commit(mutation.PUSH_EMPTY_SENTENCE,
+        context.dispatch(action.PRE_PUSH,
           {
-            sentence: state.state.segments[index].sentence,
-            comboIndex: state.state.segments[index].comboIndex,
+            element:
+            {
+              sentence: context.state.segments[index].sentence,
+              comboIndex: context.state.segments[index].comboIndex,
+            },
           });
       });
     },
-    [action.command.DELETE](state) {
-      let indexOffset = 0;
-      state.state.selected.forEach((id) => {
-        state.commit(mutation.REMOVE, id - indexOffset);
-        indexOffset += 1;
-      });
-      state.commit(mutation.RESET_SELECTED);
+    [action.PRE_PUSH]({ commit, state }, { element: { sentence, comboIndex }, index }) {
+      commit(mutation.NEW_SENTENCE, { element: { sentence: sentence ?? '', comboIndex: comboIndex ?? 0 }, index: index ?? state.segments.length });
+      commit(mutation.EVALUATE_SELECTED, { targetIndex: index, mode: 'add' });
     },
-    [action.CHANGE_SELECTION](state, { newIndex, mode }) {
+    [action.command.DELETE]({ commit, state }) {
+      state.selected.forEach((id, index) => {
+        commit(mutation.REMOVE, id - index);
+        commit(mutation.EVALUATE_SELECTED, { targetIndex: id - index, mode: 'remove' });
+      });
+      commit(mutation.RESET_SELECTED);
+    },
+    [action.CHANGE_SELECTION]({ commit, state }, { newIndex, mode }) {
       if (mode === 'add') {
-        state.commit(mutation.ADD_SELECTED, newIndex);
+        commit(mutation.ADD_SELECTED, newIndex);
       } else {
-        state.commit(
+        commit(
           mutation.REMOVE_SELECTED,
-          state.state.selected.findIndex((element) => element === newIndex),
+          state.selected.findIndex((element) => element === newIndex),
         );
       }
     },
-    [action.COPY](state) {
-      state.commit(mutation.COPY_SELECTED);
+    [action.COPY]({ commit }) {
+      commit(mutation.COPY_SELECTED);
     },
-    [action.PASTE](state) {
-      state.dispatch(action.command.NEW_SENTENCE, state.state.clipboard);
+    [action.PASTE](context) {
+      context.dispatch(action.command.NEW_SENTENCE, context.state.clipboard);
     },
-    [action.command.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
-      state.commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });
+    [action.command.CHANGE_COMBO_INDEX]({ commit }, { row, newComboIndex }) {
+      commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });
     },
-    [action.command.CHANGE_SENTENCE](state, { index, newSentence }) {
-      state.commit(mutation.CHANGE_SENTENCE, { index, newSentence });
+    [action.command.CHANGE_SENTENCE]({ commit }, { index, newSentence }) {
+      commit(mutation.CHANGE_SENTENCE, { index, newSentence });
     },
   },
   modules: {
