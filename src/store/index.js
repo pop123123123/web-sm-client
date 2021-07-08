@@ -85,9 +85,6 @@ export default new Vuex.Store({
         });
       });
     },
-    [action.PRE_PUSH]({ commit, state }, { element: { sentence, comboIndex }, index }) {
-      commit(mutation.NEW_SENTENCE, { element: { sentence: sentence ?? '', comboIndex: comboIndex ?? 0 }, index: index ?? state.segments.length });
-    },
     [action.command.DELETE]({ commit, state }) {
       state.selected.forEach((id, index) => {
         commit(mutation.REMOVE, id - index);
