@@ -111,26 +111,15 @@
 </template>
 
 <script>
-<<<<<<< HEAD
 import action from '@/store/action-types';
-=======
 import draggable from 'vuedraggable';
-<<<<<<< HEAD
->>>>>>> cb52de1 (first drag and droptable)
-=======
 import Sortable from 'sortablejs';
->>>>>>> 65b3521 (add first sort (bad display))
 
 export default {
   name: 'PanelTable',
-  props: {},
-<<<<<<< HEAD
-  components: {},
-=======
   components: {
     draggable,
   },
->>>>>>> cb52de1 (first drag and droptable)
   data() {
     return {
       action,
@@ -148,7 +137,6 @@ export default {
     };
   },
   methods: {
-<<<<<<< HEAD
     selectAll(all) {
       if (all.value) {
         all.items.forEach((item) => this.$store.dispatch(
@@ -159,14 +147,13 @@ export default {
           action.CHANGE_SELECTION, { newIndex: item.index, mode: 'remove' },
         ));
       }
-=======
+    },
     saveOrder(event) {
       const movedItem = this.$store.state.combos.splice(event.oldIndex, 1)[0];
       this.$store.state.combos.splice(event.newIndex, 0, movedItem);
     },
     newSentence() {
       this.$store.dispatch('NEW_SENTENCE');
->>>>>>> 65b3521 (add first sort (bad display))
     },
     onItemSelected(sel) {
       if (sel.value) {
