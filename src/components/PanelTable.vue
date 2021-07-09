@@ -114,7 +114,6 @@ import Sortable from 'sortablejs';
 
 export default {
   name: 'PanelTable',
-  props: {},
   components: {
     draggable,
   },
