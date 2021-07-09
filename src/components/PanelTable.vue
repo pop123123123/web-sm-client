@@ -1,6 +1,5 @@
 <template>
   <div class="panelTable">
-    {{ $store.state.selected }}
     <v-text-field
       v-model="search"
       append-icon="mdi-magnify"
