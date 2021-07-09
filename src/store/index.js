@@ -4,14 +4,12 @@ import Vuex from 'vuex';
 import mutation from './mutation-types';
 import action from './action-types';
 
-function selectionOffset(state, targetIndex, modeAdd) {
-  if (state.selected.length > 0) {
-    state.selected.forEach((element, index) => {
-      if (targetIndex <= element) {
-        state.selected[index] += (modeAdd * 2 - 1);
-      }
-    });
-  }
+function offsetSelection(state, targetIndex, modeAdd) {
+  state.selected.forEach((element, index) => {
+    if (targetIndex <= element) {
+      state.selected[index] += (modeAdd * 2 - 1);
+    }
+  });
 }
 
 Vue.use(Vuex);
@@ -39,11 +37,12 @@ export default new Vuex.Store({
     },
     [mutation.NEW_SENTENCE](state, { element: { sentence, comboIndex }, index }) {
       state.segments.splice(index, 0, { sentence, comboIndex });
-      selectionOffset(state, index, 1);
+      offsetSelection(state, index, 1);
     },
     [mutation.REMOVE](state, index) {
       state.segments.splice(index, 1);
-      selectionOffset(state, index, 0);
+      state.selected = state.selected.filter((element) => element !== index);
+      offsetSelection(state, index, 0);
     },
     [mutation.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
       state.segments[row].comboIndex = newComboIndex;
@@ -74,22 +73,19 @@ export default new Vuex.Store({
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
       context.commit(mutation.NEW_SENTENCE, { element: { sentence: '', comboIndex: 0 }, index });
     },
-    [action.command.NEW_SENTENCE](context, indexList) {
+    [action.command.DUPLICATE_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
         context.commit(mutation.NEW_SENTENCE, {
-          element: {
-            sentence: context.state.segments[index].sentence,
-            comboIndex: context.state.segments[index].comboIndex,
-          },
+          element: { ...context.state.segments[index] },
           index: context.state.segments.length,
         });
       });
     },
     [action.command.DELETE]({ commit, state }) {
+      state.selected.sort((a, b) => a - b);
       state.selected.forEach((id, index) => {
         commit(mutation.REMOVE, id - index);
       });
-      commit(mutation.RESET_SELECTED);
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
       if (modeAdd) {
@@ -105,7 +101,7 @@ export default new Vuex.Store({
       commit(mutation.COPY_SELECTED);
     },
     [action.PASTE](context) {
-      context.dispatch(action.command.NEW_SENTENCE, context.state.clipboard);
+      context.dispatch(action.command.DUPLICATE_SENTENCE, context.state.clipboard);
     },
     [action.command.CHANGE_COMBO_INDEX]({ commit }, { row, newComboIndex }) {
       commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });

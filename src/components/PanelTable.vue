@@ -152,7 +152,7 @@ export default {
     changeComboIndex(row, n) {
       const actualComboIndex = this.$store.state.segments[row].comboIndex;
       if (actualComboIndex + n >= 0) {
-        this.$store.commit(action.command.CHANGE_COMBO_INDEX, {
+        this.$store.dispatch(action.command.CHANGE_COMBO_INDEX, {
           row,
           newComboIndex: actualComboIndex + n,
         });
