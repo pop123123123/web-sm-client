@@ -25,6 +25,7 @@ export default new Vuex.Store({
     },
     selected: [],
     clipboard: [],
+    listProjects: [],
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -67,26 +68,29 @@ export default new Vuex.Store({
   },
   actions: {
     [action.CREATE_PROJECT]({ commit }, newProject) {
-      commit(mutation.CHANGE_PROJECT_NAME, newProject.name);
-      commit(mutation.CHANGE_PROJECT_SEED, newProject.seed);
-      commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
+      commit(mutation.CHANGE_PROJECT_NAME, newProject.name); //
+      commit(mutation.CHANGE_PROJECT_SEED, newProject.seed); //
+      commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls); //
       client.send('CreateProject', { project_name: newProject.name, seed: newProject.seed, urls: newProject.video_urls });
     },
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
-      context.commit(mutation.NEW_SENTENCE, { element: { sentence: '', comboIndex: 0 }, index });
+      client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: '', position: index || context.state.segments.length });
+      context.commit(mutation.NEW_SENTENCE, { element: { sentence: '', comboIndex: 0 }, index }); //
     },
     [action.command.DUPLICATE_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
-        context.commit(mutation.NEW_SENTENCE, {
-          element: { ...context.state.segments[index] },
-          index: context.state.segments.length,
-        });
+        context.commit(mutation.NEW_SENTENCE, { //
+          element: { ...context.state.segments[index] }, //
+          index: context.state.segments.length, //
+        }); //
+        client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: context.state.segments[index].sentence, position: context.state.segments.length }); // Todo we don't copy comboIndex ?
       });
     },
     [action.command.DELETE]({ commit, state }) {
       state.selected.sort((a, b) => a - b);
       state.selected.forEach((id, index) => {
         commit(mutation.REMOVE, id - index);
+        // client.send('RemoveSegment', { project_name: state.project.name, position: id - index });
       });
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
@@ -107,9 +111,20 @@ export default new Vuex.Store({
     },
     [action.command.CHANGE_COMBO_INDEX]({ commit }, { row, newComboIndex }) {
       commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });
+      // Todo send to the server an action
     },
     [action.command.CHANGE_SENTENCE]({ commit }, { index, newSentence }) {
       commit(mutation.CHANGE_SENTENCE, { index, newSentence });
+      // Todo send to the server an action
+    },
+    [action.LIST_PROJECTS]() {
+      client.send('ListProjects');
+    },
+    [action.DELETE_PROJECT](context, projectName) {
+      client.send('DeleteProject', projectName);
+    },
+    [action.JOIN_PROJECT](context, projectName) {
+      client.send('JoinProject', projectName);
     },
   },
   modules: {

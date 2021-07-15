@@ -6,7 +6,6 @@ const plugin = () => (store) => {
     const data = JSON.parse(event.data);
     console.debug('WebSocket message received:', data);
     if (data.Err) throw data.Err;
-
     store.commit(...data);
   };
 };
