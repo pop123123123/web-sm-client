@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import mutation from './mutation-types';
 import action from './action-types';
+import { client, plugin as socketPlugin } from '../socket';
 
 function offsetSelection(state, targetIndex, modeAdd) {
   state.selected.forEach((element, index) => {
@@ -69,6 +70,7 @@ export default new Vuex.Store({
       commit(mutation.CHANGE_PROJECT_NAME, newProject.name);
       commit(mutation.CHANGE_PROJECT_SEED, newProject.seed);
       commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls);
+      client.send('CreateProject', { project_name: newProject.name, seed: newProject.seed, urls: newProject.video_urls });
     },
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
       context.commit(mutation.NEW_SENTENCE, { element: { sentence: '', comboIndex: 0 }, index });
@@ -114,4 +116,5 @@ export default new Vuex.Store({
   },
   getters: {
   },
+  plugins: [socketPlugin()],
 });
