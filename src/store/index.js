@@ -93,8 +93,7 @@ export default new Vuex.Store({
       client.send('CreateProject', { project_name: newProject.name, seed: newProject.seed, urls: newProject.video_urls });
     },
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
-      client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: '', position: index || context.state.segments.length });
-      context.commit(mutation.NEW_SEGMENT, { segment: { s: '', i: 0 }, row: index }); //
+      client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: '', position: index ?? context.state.segments.length });
     },
     [action.command.DUPLICATE_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
@@ -105,14 +104,14 @@ export default new Vuex.Store({
           }, //
           row: context.state.segments.length, //
         }); //
-        client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: context.state.segments[index].sentence, position: context.state.segments.length }); // Todo we don't copy comboIndex ?
+        // TODO Use the server's command to duplicate lines
       });
     },
     [action.command.DELETE]({ commit, state }) {
       state.selected.sort((a, b) => a - b);
       state.selected.forEach((id, index) => {
         commit(mutation.REMOVE_SEGMENT, id - index);
-        client.send('RemoveSegment', { project_name: state.project.name, position: id - index });
+        // client.send('RemoveSegment', { project_name: state.project.name, position: id - index });
       });
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
@@ -139,7 +138,7 @@ export default new Vuex.Store({
       commit(mutation.CHANGE_SENTENCE, { row: index, sentence: newSentence });
       // Todo send to the server an action
     },
-    [action.LIST_PROJECTS]() { // TODO unreconized request ?
+    [action.LIST_PROJECTS]() { // unused for now
       client.send('ListProjects');
     },
     [action.DELETE_PROJECT](context, projectName) { // unused for now

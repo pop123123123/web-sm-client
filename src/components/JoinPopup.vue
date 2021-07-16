@@ -16,7 +16,7 @@
     </md-card-content>
 
     <md-card-actions>
-    <md-button @click="refreshProjectList">Refresh</md-button>
+    <md-button @click="$store.dispatch(action.LIST_PROJECTS);">Refresh</md-button>
     </md-card-actions>
 
     </md-card>
@@ -30,18 +30,16 @@ export default {
   name: 'JoinPopup',
   props: {},
   data: () => ({
+    action,
     projectList: [], // TODO out of the screen if too long
   }),
   methods: {
-    refreshProjectList() {
-      this.$store.dispatch(action.LIST_PROJECTS);
-    },
     // joinRoom(roomNumber) {
     // TODO join room number X on button click
     // },
   },
   created() {
-    this.refreshProjectList();
+    this.$store.dispatch(action.LIST_PROJECTS);
   },
 };
 </script>
