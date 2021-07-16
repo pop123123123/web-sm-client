@@ -52,7 +52,7 @@
     <md-card-actions>
       <md-button
         class="md-raised md-primary"
-        @click="$store.dispatch(action.command.NEW_EMPTY_SENTENCE)"
+        @click="$store.dispatch(action.command.NEW_EMPTY_SENTENCE,$store.state.segments.length)"
         >Add</md-button
       >
       <md-button
