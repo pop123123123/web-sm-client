@@ -37,17 +37,17 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
       state.project.video_urls = newVIDEOS;
     },
-    [mutation.NEW_SENTENCE](state, { element: { sentence, comboIndex }, index }) {
-      state.segments.splice(index, 0, { sentence, comboIndex });
-      offsetSelection(state, index, 1);
+    [mutation.NEW_SEGMENT](state, { segment: { s, i }, row }) {
+      state.segments.splice(row, 0, { sentence: s, comboIndex: i });
+      offsetSelection(state, row, 1);
     },
-    [mutation.REMOVE](state, index) {
+    [mutation.REMOVE_SEGMENT](state, index) {
       state.segments.splice(index, 1);
       state.selected = state.selected.filter((element) => element !== index);
       offsetSelection(state, index, 0);
     },
-    [mutation.CHANGE_COMBO_INDEX](state, { row, newComboIndex }) {
-      state.segments[row].comboIndex = newComboIndex;
+    [mutation.CHANGE_COMBO_INDEX](state, { row, comboIndex }) {
+      state.segments[row].comboIndex = comboIndex;
     },
     [mutation.ADD_SELECTED](state, newSelected) {
       state.selected.push(newSelected);
@@ -62,8 +62,8 @@ export default new Vuex.Store({
       state.clipboard = [];
       state.selected.forEach((element) => state.clipboard.push(element));
     },
-    [mutation.CHANGE_SENTENCE](state, { index, newSentence }) {
-      state.segments[index].sentence = newSentence;
+    [mutation.CHANGE_SENTENCE](state, { row, sentence }) {
+      state.segments[row].sentence = sentence;
     },
   },
   actions: {
@@ -75,13 +75,16 @@ export default new Vuex.Store({
     },
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
       client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: '', position: index || context.state.segments.length });
-      context.commit(mutation.NEW_SENTENCE, { element: { sentence: '', comboIndex: 0 }, index }); //
+      context.commit(mutation.NEW_SEGMENT, { segment: { s: '', i: 0 }, row: index }); //
     },
     [action.command.DUPLICATE_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
-        context.commit(mutation.NEW_SENTENCE, { //
-          element: { ...context.state.segments[index] }, //
-          index: context.state.segments.length, //
+        context.commit(mutation.NEW_SEGMENT, { //
+          segment: {
+            s: context.state.segments[index].sentence,
+            i: context.state.segments[index].comboIndex,
+          }, //
+          row: context.state.segments.length, //
         }); //
         client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: context.state.segments[index].sentence, position: context.state.segments.length }); // Todo we don't copy comboIndex ?
       });
@@ -89,8 +92,8 @@ export default new Vuex.Store({
     [action.command.DELETE]({ commit, state }) {
       state.selected.sort((a, b) => a - b);
       state.selected.forEach((id, index) => {
-        commit(mutation.REMOVE, id - index);
-        // client.send('RemoveSegment', { project_name: state.project.name, position: id - index });
+        commit(mutation.REMOVE_SEGMENT, id - index);
+        client.send('RemoveSegment', { project_name: state.project.name, position: id - index });
       });
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
@@ -110,20 +113,20 @@ export default new Vuex.Store({
       context.dispatch(action.command.DUPLICATE_SENTENCE, context.state.clipboard);
     },
     [action.command.CHANGE_COMBO_INDEX]({ commit }, { row, newComboIndex }) {
-      commit(mutation.CHANGE_COMBO_INDEX, { row, newComboIndex });
+      commit(mutation.CHANGE_COMBO_INDEX, { row, comboIndex: newComboIndex });
       // Todo send to the server an action
     },
     [action.command.CHANGE_SENTENCE]({ commit }, { index, newSentence }) {
-      commit(mutation.CHANGE_SENTENCE, { index, newSentence });
+      commit(mutation.CHANGE_SENTENCE, { row: index, sentence: newSentence });
       // Todo send to the server an action
     },
-    [action.LIST_PROJECTS]() {
+    [action.LIST_PROJECTS]() { // unused for now
       client.send('ListProjects');
     },
-    [action.DELETE_PROJECT](context, projectName) {
+    [action.DELETE_PROJECT](context, projectName) { // unused for now
       client.send('DeleteProject', projectName);
     },
-    [action.JOIN_PROJECT](context, projectName) {
+    [action.JOIN_PROJECT](context, projectName) { // unused for now
       client.send('JoinProject', projectName);
     },
   },
