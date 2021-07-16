@@ -26,6 +26,7 @@ export default new Vuex.Store({
     selected: [],
     clipboard: [],
     listProjects: [],
+    users: [],
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -64,6 +65,21 @@ export default new Vuex.Store({
     },
     [mutation.CHANGE_SENTENCE](state, { row, sentence }) {
       state.segments[row].sentence = sentence;
+    },
+    [mutation.CHANGE_PROJECT](state, { // The server will only calls this one on creation
+      seed, videoUrls, name, segments,
+    }) {
+      mutation.CHANGE_PROJECT_SEED(seed); // delete this mutation => state.project.seed = seed;
+      mutation.CHANGE_PROJECT_NAME(name);
+      mutation.CHANGE_PROJECT_VIDEOS(videoUrls); //
+      // delete this mutation => state.project.videos_urls = VideoUrls
+      state.segments = segments;
+    },
+    [mutation.USER_JOINED_PROJECT](state, user) {
+      state.users.push(user);
+    },
+    [mutation.USER_LEFT_PROJECT](state, user) {
+      state.users = state.users.filter((u) => u !== user);
     },
   },
   actions: {
