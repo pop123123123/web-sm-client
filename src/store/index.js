@@ -81,6 +81,9 @@ export default new Vuex.Store({
     [mutation.USER_LEFT_PROJECT](state, user) {
       state.users = state.users.filter((u) => u !== user);
     },
+    [mutation.CHANGE_LIST_PROJECTS](state, listProjects) {
+      state.listProjects = listProjects;
+    },
   },
   actions: {
     [action.CREATE_PROJECT]({ commit }, newProject) {
@@ -136,7 +139,7 @@ export default new Vuex.Store({
       commit(mutation.CHANGE_SENTENCE, { row: index, sentence: newSentence });
       // Todo send to the server an action
     },
-    [action.LIST_PROJECTS]() { // unused for now
+    [action.LIST_PROJECTS]() { // TODO unreconized request ?
       client.send('ListProjects');
     },
     [action.DELETE_PROJECT](context, projectName) { // unused for now
