@@ -73,7 +73,7 @@ export default new Vuex.Store({
       state.project.seed = seed;
       state.project.name = name;
       state.project.videoUrls = videoUrls;
-      state.segments = segments;
+      state.segments = segments.map(({ s, i }) => ({ sentence: s, comboIndex: i }));
     },
     [mutation.USER_JOINED_PROJECT](state, user) {
       state.users.push(user);
@@ -135,7 +135,6 @@ export default new Vuex.Store({
       // Todo send to the server an action
     },
     [action.command.CHANGE_SENTENCE]({ state }, { index, newSentence }) {
-      // Todo send to the server an action
       client.send('ModifySegmentSentence', {
         project_name: state.project.name,
         segment_position: index,

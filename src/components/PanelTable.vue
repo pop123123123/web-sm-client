@@ -29,7 +29,7 @@
           <template v-slot:input>
             <v-text-field
               v-model="editSentence"
-              :rules="[max25chars]"
+              :rules="[(v) => v.length <= 25 || 'Warning: Long input is not recommended']"
               label="Edit"
               single-line
               counter
@@ -76,7 +76,6 @@ export default {
     return {
       action,
       editSentence: '',
-      max25chars: (v) => v.length <= 25 || 'Warning: Long input is not recommended',
       search: '',
       headers: [
         {
