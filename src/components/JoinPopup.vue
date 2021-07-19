@@ -1,5 +1,4 @@
 <template>
-  <div class="hello">
     <md-card>
     <md-card-header class="md-title">Join a project</md-card-header>
 
@@ -18,7 +17,6 @@
     </md-card-actions>
 
     </md-card>
-  </div>
 </template>
 
 <script>
@@ -35,9 +33,6 @@ export default {
       this.$store.dispatch(this.action.JOIN_PROJECT, project.name);
       this.$emit('join');
     },
-  },
-  created() {
-    this.$store.dispatch(action.LIST_PROJECTS);
   },
 };
 </script>
