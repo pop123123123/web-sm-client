@@ -21,12 +21,13 @@ export default new Vuex.Store({
     project: {
       name: null,
       seed: null,
-      video_urls: [],
+      videoUrls: [],
     },
     selected: [],
     clipboard: [],
     projects: [],
     users: [],
+    socketError: '',
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -36,7 +37,7 @@ export default new Vuex.Store({
       state.project.seed = newSeed;
     },
     [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
-      state.project.video_urls = newVIDEOS;
+      state.project.videoUrls = newVIDEOS;
     },
     [mutation.NEW_SEGMENT](state, { segment: { s, i }, row }) {
       state.segments.splice(row, 0, { sentence: s, comboIndex: i });
@@ -83,13 +84,13 @@ export default new Vuex.Store({
     [mutation.CHANGE_LIST_PROJECTS](state, { projects }) {
       Vue.set(state, 'projects', projects);
     },
+    [mutation.CHANGE_SOCKET_ERROR](state, error) {
+      state.socketError = error;
+    },
   },
   actions: {
-    [action.CREATE_PROJECT]({ commit }, newProject) {
-      commit(mutation.CHANGE_PROJECT_NAME, newProject.name); //
-      commit(mutation.CHANGE_PROJECT_SEED, newProject.seed); //
-      commit(mutation.CHANGE_PROJECT_VIDEOS, newProject.video_urls); //
-      client.send('CreateProject', { project_name: newProject.name, seed: newProject.seed, urls: newProject.video_urls });
+    [action.CREATE_PROJECT](context, newProject) {
+      client.send('CreateProject', { project_name: newProject.name, seed: newProject.seed, urls: newProject.videoUrls });
     },
     [action.command.NEW_EMPTY_SENTENCE](context, index) {
       client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: '', position: index ?? context.state.segments.length });
@@ -141,7 +142,7 @@ export default new Vuex.Store({
         new_sentence: newSentence,
       });
     },
-    [action.LIST_PROJECTS]() { // unused for now
+    [action.LIST_PROJECTS]() {
       client.send('ListProjects');
     },
     [action.DELETE_PROJECT](context, projectName) { // unused for now
@@ -149,6 +150,9 @@ export default new Vuex.Store({
     },
     [action.JOIN_PROJECT](context, projectName) { // unused for now
       client.send('JoinProject', { project_name: projectName });
+    },
+    [action.CHANGE_SOCKET_ERROR]({ commit }, error) {
+      commit(mutation.CHANGE_SOCKET_ERROR, error);
     },
   },
   modules: {

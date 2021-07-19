@@ -17,7 +17,7 @@
 
           <md-chips
             class="md-primary shake-on-error"
-            v-model="formProject.video_urls"
+            v-model="formProject.videoUrls"
             md-placeholder="URL"
           >
             <div class="md-helper-text">Copy youtube url or code
@@ -26,7 +26,7 @@
           </md-chips>
           <div class="md-caption"> <span
               class="error"
-              v-if="formProject.video_urls.length < 1"
+              v-if="formProject.videoUrls.length < 1"
               >{{ errorMessage }}</span
             ></div>
         </md-card-content>
@@ -44,12 +44,12 @@ export default {
   props: {
   },
   data: () => ({
-    formProject: { name: null, seed: null, video_urls: [] },
+    formProject: { name: null, seed: null, videoUrls: [] },
     errorMessage: '',
   }),
   methods: {
     validateProject() {
-      if (this.formProject.video_urls.length > 0) {
+      if (this.formProject.videoUrls.length > 0) {
         this.sendFormValid();
         this.$store.dispatch('CREATE_PROJECT', this.formProject);
       } else {
