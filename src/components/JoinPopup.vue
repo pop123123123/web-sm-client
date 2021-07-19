@@ -7,12 +7,10 @@
       <div class="md-subheading">
     <label>Projects List : </label>
       </div>
-      <template v-for="(val,index) in projectList.length">
-      <li :key="index">
-       <h3>{{projectList[index]}}</h3>
-        <v-btn outlined elevation="0">Join</v-btn>
+      <li v-for="(project, index) in $store.state.projects" :key="index">
+       <h3>{{project}}</h3>
+        <v-btn outlined elevation="0" @click="join(project)">Join</v-btn>
       </li>
-      </template>
     </md-card-content>
 
     <md-card-actions>
@@ -31,12 +29,12 @@ export default {
   props: {},
   data: () => ({
     action,
-    projectList: [], // TODO out of the screen if too long
   }),
   methods: {
-    // joinRoom(roomNumber) {
-    // TODO join room number X on button click
-    // },
+    join(project) {
+      this.$store.dispatch(this.action.JOIN_PROJECT, project.name);
+      this.$emit('join');
+    },
   },
   created() {
     this.$store.dispatch(action.LIST_PROJECTS);

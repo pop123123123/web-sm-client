@@ -1,5 +1,4 @@
-const socket = new WebSocket(`ws://${window.location.host
-}/ws/`);
+const socket = new WebSocket(`ws://${window.location.host}/ws/`);
 
 const plugin = () => (store) => {
   socket.onmessage = (event) => {
@@ -13,7 +12,7 @@ const plugin = () => (store) => {
 
 const client = {
   send(type, payload) {
-    socket.send(JSON.stringify({ [type]: payload }));
+    socket.send(JSON.stringify({ [type]: payload ?? null }));
   },
 };
 

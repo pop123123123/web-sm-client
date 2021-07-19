@@ -25,7 +25,7 @@ export default new Vuex.Store({
     },
     selected: [],
     clipboard: [],
-    listProjects: [],
+    projects: [],
     users: [],
   },
   mutations: {
@@ -69,20 +69,19 @@ export default new Vuex.Store({
     [mutation.CHANGE_PROJECT](state, { // The server will only calls this one on creation
       seed, videoUrls, name, segments,
     }) {
-      mutation.CHANGE_PROJECT_SEED(seed); // delete this mutation => state.project.seed = seed;
-      mutation.CHANGE_PROJECT_NAME(name);
-      mutation.CHANGE_PROJECT_VIDEOS(videoUrls); //
-      // delete this mutation => state.project.videos_urls = VideoUrls
+      state.project.seed = seed;
+      state.project.name = name;
+      state.project.videoUrls = videoUrls;
       state.segments = segments;
     },
     [mutation.USER_JOINED_PROJECT](state, user) {
       state.users.push(user);
     },
     [mutation.USER_LEFT_PROJECT](state, user) {
-      state.users = state.users.filter((u) => u !== user);
+      Vue.set(state, 'users', state.users.filter((u) => u !== user));
     },
-    [mutation.CHANGE_LIST_PROJECTS](state, listProjects) {
-      state.listProjects = listProjects;
+    [mutation.CHANGE_LIST_PROJECTS](state, { projects }) {
+      Vue.set(state, 'projects', projects);
     },
   },
   actions: {
@@ -134,18 +133,22 @@ export default new Vuex.Store({
       commit(mutation.CHANGE_COMBO_INDEX, { row, comboIndex: newComboIndex });
       // Todo send to the server an action
     },
-    [action.command.CHANGE_SENTENCE]({ commit }, { index, newSentence }) {
-      commit(mutation.CHANGE_SENTENCE, { row: index, sentence: newSentence });
+    [action.command.CHANGE_SENTENCE]({ state }, { index, newSentence }) {
       // Todo send to the server an action
+      client.send('ModifySegmentSentence', {
+        project_name: state.project.name,
+        segment_position: index,
+        new_sentence: newSentence,
+      });
     },
     [action.LIST_PROJECTS]() { // unused for now
       client.send('ListProjects');
     },
     [action.DELETE_PROJECT](context, projectName) { // unused for now
-      client.send('DeleteProject', projectName);
+      client.send('DeleteProject', { project_name: projectName });
     },
     [action.JOIN_PROJECT](context, projectName) { // unused for now
-      client.send('JoinProject', projectName);
+      client.send('JoinProject', { project_name: projectName });
     },
   },
   modules: {
