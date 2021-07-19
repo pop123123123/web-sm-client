@@ -3,7 +3,7 @@
     <md-dialog :md-active="popup">
       <md-tabs md-dynamic-height md-alignment="fixed">
         <md-tab md-label="Join">
-          <JoinPopup/>
+          <JoinPopup @join="popup = false;$emit('closed');"/>
         </md-tab>
         <md-tab md-label="Create">
           <CreateForm @formValid="popup = false;$emit('closed');"/>
