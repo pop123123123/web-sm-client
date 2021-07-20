@@ -19,6 +19,7 @@
       :items-per-page="-1"
       class="elevation-1"
       :search="search"
+      disable-sort
     >
       <template v-slot:item.element.sentence="props">
         <v-edit-dialog
