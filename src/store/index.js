@@ -97,14 +97,13 @@ export default new Vuex.Store({
     },
     [action.command.DUPLICATE_SENTENCE](context, indexList) {
       indexList.forEach((index) => {
-        context.commit(mutation.NEW_SEGMENT, { //
-          segment: {
-            s: context.state.segments[index].sentence,
-            i: context.state.segments[index].comboIndex,
-          }, //
-          row: context.state.segments.length, //
-        }); //
-        // TODO Use the server's command to duplicate lines
+        client.send('CreateSegment',
+          {
+            project_name: context.state.project.name,
+            segment_sentence: context.state.segments[index].sentence,
+            position: context.state.segments.length,
+          });
+        client.send('ModifySegmentComboIndex', { project_name: context.state.project.name, segment_position: context.state.segments.length, new_combo_index: context.state.segments[index].comboIndex });
       });
     },
     [action.command.DELETE]({ commit, state }) {
