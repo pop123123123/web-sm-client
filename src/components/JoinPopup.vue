@@ -10,6 +10,9 @@
       :headers="headers"
       disable-sort
     >
+    <template slot="no-data">
+        <div>No projects for now. Create yours !</div>
+      </template>
       <template v-slot:item="{ item }">
         <tr>
           <td>{{ item.name }}</td>
