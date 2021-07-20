@@ -130,9 +130,8 @@ export default new Vuex.Store({
     [action.PASTE](context) {
       context.dispatch(action.command.DUPLICATE_SENTENCE, context.state.clipboard);
     },
-    [action.command.CHANGE_COMBO_INDEX]({ commit }, { row, newComboIndex }) {
-      commit(mutation.CHANGE_COMBO_INDEX, { row, comboIndex: newComboIndex });
-      // Todo send to the server an action
+    [action.command.CHANGE_COMBO_INDEX](context, { row, newComboIndex }) {
+      client.send('ModifySegmentComboIndex', { project_name: context.state.project.name, segment_position: row, new_combo_index: newComboIndex });
     },
     [action.command.CHANGE_SENTENCE]({ state }, { index, newSentence }) {
       client.send('ModifySegmentSentence', {
