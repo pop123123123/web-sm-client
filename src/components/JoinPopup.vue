@@ -1,22 +1,25 @@
 <template>
-    <md-card>
-    <md-card-header class="md-title">Join a project</md-card-header>
-
-    <md-card-content>
-      <div class="md-subheading">
-    <label>Projects List : </label>
-      </div>
-      <li v-for="(project, index) in $store.state.projects" :key="index">
-       <h3>{{project}}</h3>
-        <v-btn outlined elevation="0" @click="join(project)">Join</v-btn>
-      </li>
-    </md-card-content>
-
-    <md-card-actions>
+  <div class="join">
+    <div class="md-subheading">
+      <label>Projects List : </label>
+    </div>
+    <v-data-table
+      :items="$store.state.projects"
+      hide-default-footer
+      :items-per-page="-1"
+      :headers="headers"
+      disable-sort
+    >
+      <template v-slot:item="{ item }">
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.seed }}</td>
+          <v-btn outlined elevation="0" @click="join(item)">Join</v-btn>
+        </tr>
+      </template>
+      </v-data-table>
     <md-button @click="$store.dispatch(action.LIST_PROJECTS);">Refresh</md-button>
-    </md-card-actions>
-
-    </md-card>
+</div>
 </template>
 
 <script>
@@ -27,6 +30,16 @@ export default {
   props: {},
   data: () => ({
     action,
+    headers: [
+      {
+        text: 'Name',
+        align: 'start',
+        value: 'name',
+      },
+      { text: 'Seed', value: 'seed' },
+      // { text: 'Users',value:'users'},
+      { text: '', width: '139px' },
+    ],
   }),
   methods: {
     join(project) {
