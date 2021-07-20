@@ -67,7 +67,7 @@ export default new Vuex.Store({
     [mutation.CHANGE_SENTENCE](state, { row, sentence }) {
       state.segments[row].sentence = sentence;
     },
-    [mutation.CHANGE_PROJECT](state, { // The server will only calls this one on creation
+    [mutation.CHANGE_PROJECT](state, {
       seed, videoUrls, name, segments,
     }) {
       state.project.seed = seed;
@@ -86,6 +86,12 @@ export default new Vuex.Store({
     },
     [mutation.CHANGE_SOCKET_ERROR](state, error) {
       state.socketError = error;
+    },
+    [mutation.NEW_PROJECT](state, newProject) {
+      state.projects.push(newProject);
+    },
+    [mutation.REMOVE_PROJECT](state, { name }) {
+      state.projects = state.projects.filter((project) => project.name !== name);
     },
   },
   actions: {
@@ -145,7 +151,7 @@ export default new Vuex.Store({
     [action.DELETE_PROJECT](context, projectName) { // unused for now
       client.send('DeleteProject', { project_name: projectName });
     },
-    [action.JOIN_PROJECT](context, projectName) { // unused for now
+    [action.JOIN_PROJECT](context, projectName) {
       client.send('JoinProject', { project_name: projectName });
     },
     [action.CHANGE_SOCKET_ERROR]({ commit }, error) {
