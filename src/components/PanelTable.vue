@@ -22,7 +22,13 @@
       disable-sort
     >
       <template slot="no-data">
-        <div>There's nothing here. Start by adding a segment !</div>
+        <!-- <div>There's nothing here. Start by adding a segment !</div> -->
+        <v-btn
+          @click="
+            $store.dispatch(action.DELETE_PROJECT, $store.state.project.name)
+          "
+          >delete project
+        </v-btn>
       </template>
       <template v-slot:item.element.sentence="props">
         <v-edit-dialog
