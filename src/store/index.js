@@ -43,10 +43,10 @@ export default new Vuex.Store({
       state.segments.splice(row, 0, { sentence: s, comboIndex: i });
       offsetSelection(state, row, 1);
     },
-    [mutation.REMOVE_SEGMENT](state, index) {
-      state.segments.splice(index, 1);
-      state.selected = state.selected.filter((element) => element !== index);
-      offsetSelection(state, index, 0);
+    [mutation.REMOVE_SEGMENT](state, { row }) {
+      state.segments.splice(row, 1);
+      state.selected = state.selected.filter((element) => element !== row);
+      offsetSelection(state, row, 0);
     },
     [mutation.CHANGE_COMBO_INDEX](state, { row, comboIndex }) {
       state.segments[row].comboIndex = comboIndex;
@@ -112,11 +112,10 @@ export default new Vuex.Store({
         client.send('ModifySegmentComboIndex', { project_name: context.state.project.name, segment_position: context.state.segments.length, new_combo_index: context.state.segments[index].comboIndex });
       });
     },
-    [action.command.DELETE]({ commit, state }) {
+    [action.command.DELETE]({ state }) {
       state.selected.sort((a, b) => a - b);
       state.selected.forEach((id, index) => {
-        commit(mutation.REMOVE_SEGMENT, id - index);
-        // client.send('RemoveSegment', { project_name: state.project.name, position: id - index });
+        client.send('RemoveSegment', { project_name: state.project.name, segment_position: id - index });
       });
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
