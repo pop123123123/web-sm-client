@@ -1,29 +1,62 @@
 <template>
   <div>
-    <md-dialog :md-active="popup">
-      <md-tabs md-dynamic-height md-alignment="fixed">
-        <md-tab md-label="Join">
-          <JoinPopup @join="popup = false;$emit('closed');"/>
-        </md-tab>
-        <md-tab md-label="Create">
-          <CreateForm @formValid="popup = false;$emit('closed');"/>
-        </md-tab>
+      <v-dialog v-model="popup" width="500" persistent>
+        <v-card>
+          <v-tabs fixed-tabs color="primary">
+            <v-tabs-slider color="primary"></v-tabs-slider>
+            <v-tab href="#join"> Join </v-tab>
+            <v-tab-item value="join">
+              <v-card>
+                <v-card-text>
+                  <JoinPopup
+                    @join="
+                      popup = false;
+                      $emit('closed');
+                    "
+                  />
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab href="#create"> Create </v-tab>
+            <v-tab-item value="create">
+              <v-card>
+                <v-card-text>
+                  <CreateForm
+                    @formValid="
+                      popup = false;
+                      $emit('closed');
+                    "
+                  />
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab href="#load"> Load </v-tab>
+            <v-tab-item value="load">
+              <v-card>
+                <v-card-text>
+                  <LoadForm />
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+         <v-card elevation="0">
+           <v-card-actions>
+             <v-spacer></v-spacer>
+             <v-btn
+          outlined
+            v-if="!required"
+            @click="
+              popup = false;
+              $emit('closed');
+            "
+          >
+            Close
+          </v-btn>
+           </v-card-actions>
 
-        <md-tab md-label="Load">
-          <LoadForm />
-        </md-tab>
-      </md-tabs>
-      <md-dialog-actions>
-        <md-button
-          v-if="!required"
-          class="md-primary"
-          @click="popup=false;$emit('closed');"
-        >
-          Close
-        </md-button>
-
-      </md-dialog-actions>
-    </md-dialog>
+          </v-card>
+        </v-card>
+      </v-dialog>
   </div>
 </template>
 
@@ -45,12 +78,10 @@ export default {
   data: () => ({
     popup: true,
   }),
-  methods: {
-  },
+  methods: {},
   computed: {},
 };
 </script>
 
 <style lang="scss">
-
 </style>

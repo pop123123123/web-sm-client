@@ -1,5 +1,5 @@
 <template>
-  <div class="join">
+  <div>
     <v-data-table
       :items="$store.state.projects"
       hide-default-footer
@@ -12,7 +12,7 @@
           <v-toolbar-title>Projects</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark class="mb-2"> New Project </v-btn>
+          <v-btn color="secondary" dark> New Project </v-btn>
         </v-toolbar>
       </template>
       <template slot="no-data">
@@ -22,9 +22,6 @@
         <v-btn outlined elevation="0" @click="join(item)">Join</v-btn>
       </template>
     </v-data-table>
-    <md-button @click="$store.dispatch(action.LIST_PROJECTS)"
-      >Refresh</md-button
-    >
   </div>
 </template>
 
