@@ -1,8 +1,5 @@
 <template>
   <div class="join">
-    <div class="md-subheading">
-      <label>Projects List : </label>
-    </div>
     <v-data-table
       :items="$store.state.projects"
       hide-default-footer
@@ -10,19 +7,25 @@
       :headers="headers"
       disable-sort
     >
-    <template slot="no-data">
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Projects</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" dark class="mb-2"> New Project </v-btn>
+        </v-toolbar>
+      </template>
+      <template slot="no-data">
         <div>No projects for now. Create yours !</div>
       </template>
-      <template v-slot:item="{ item }">
-        <tr>
-          <td>{{ item.name }}</td>
-          <td>{{ item.seed }}</td>
-          <v-btn outlined elevation="0" @click="join(item)">Join</v-btn>
-        </tr>
+      <template v-slot:item.actions="{ item }">
+        <v-btn outlined elevation="0" @click="join(item)">Join</v-btn>
       </template>
-      </v-data-table>
-    <md-button @click="$store.dispatch(action.LIST_PROJECTS);">Refresh</md-button>
-</div>
+    </v-data-table>
+    <md-button @click="$store.dispatch(action.LIST_PROJECTS)"
+      >Refresh</md-button
+    >
+  </div>
 </template>
 
 <script>
@@ -40,8 +43,8 @@ export default {
         value: 'name',
       },
       { text: 'Seed', value: 'seed' },
+      { text: 'Actions', value: 'actions', align: 'center' },
       // { text: 'Users',value:'users'},
-      { text: '', width: '139px' },
     ],
   }),
   methods: {
