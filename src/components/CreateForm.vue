@@ -1,39 +1,34 @@
 <template>
   <div class="hello">
     <form @submit.prevent="validateProject">
-      <md-card>
-        <md-card-header class="md-title"> Project's Settings </md-card-header>
-        <md-card-content>
-          <md-field>
-            <label>Project's Name</label>
-            <md-input md-input required v-model="formProject.name"></md-input>
-          </md-field>
-          <md-field>
-            <label>Seed</label>
-            <md-input v-model="formProject.seed"> </md-input>
-            <span class="md-helper-text">Optional, random by default</span>
-          </md-field>
-          <!-- TODO bug with chips, trigger submit when pressing enter on chips -->
-
-          <md-chips
-            class="md-primary shake-on-error"
-            v-model="formProject.videoUrls"
-            md-placeholder="URL"
-          >
-            <div class="md-helper-text">Copy youtube url or code
+      <v-app>
+        <v-card>
+          <v-card-title>Project's Settings</v-card-title>
+          <v-card-text>
+            <v-text-field v-model="formProject.name" label="Name" required />
+            <v-text-field
+              v-model="formProject.seed"
+              hint="Optional, random by default"
+              label="Seed"
+            />
+            <v-combobox
+              v-model="formProject.videoUrls"
+              label="Copy youtube url or code"
+              multiple
+              chips
+            ></v-combobox>
+            <div>
+              <p style="color:#FF0000" v-if="formProject.videoUrls.length < 1">{{
+                errorMessage
+              }}</p>
             </div>
+          </v-card-text>
 
-          </md-chips>
-          <div class="md-caption"> <span
-              class="error"
-              v-if="formProject.videoUrls.length < 1"
-              >{{ errorMessage }}</span
-            ></div>
-        </md-card-content>
-        <md-card-actions>
-          <md-button type="submit">Submit</md-button>
-        </md-card-actions>
-      </md-card>
+          <v-card-actions>
+            <v-btn type="sumbit">Create</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-app>
     </form>
   </div>
 </template>
@@ -41,8 +36,7 @@
 <script>
 export default {
   name: 'CreateForm',
-  props: {
-  },
+  props: {},
   data: () => ({
     formProject: { name: null, seed: null, videoUrls: [] },
     errorMessage: '',
@@ -60,14 +54,12 @@ export default {
       this.$emit('formValid');
     },
   },
-  computed: {
-
-  },
+  computed: {},
 };
 </script>
 
 <style>
-.error {
+/* .error {
   color: red;
 }
 .shake-on-error .md-duplicated {
@@ -94,5 +86,5 @@ export default {
   100% {
     transform: translate(0px);
   }
-}
+} */
 </style>

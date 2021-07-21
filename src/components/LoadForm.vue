@@ -1,21 +1,20 @@
 <template>
   <div class="hello">
-    <md-card>
-    <md-card-header class="md-title">Load File</md-card-header>
-
-    <md-card-content>
-      <div class="md-subheading">
-    <label>Choose a file to load:</label>
-      </div>
-      <input type="file" id="file" name="file" accept=".p00p" />
-
-    </md-card-content>
-
-    <md-card-actions>
-    <md-button @click="loadFile">Load</md-button>
-    </md-card-actions>
-
-    </md-card>
+    <v-app>
+<!-- TODO Add a layout ? -->
+    <v-card>
+      <v-card-title>Load File</v-card-title>
+      <v-card-text>
+        <div class="md-subheading">
+          <label>Choose a file to load:</label>
+        </div>
+        <input type="file" id="file" name="file" accept=".p00p" />
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="primary" @click="loadFile">Load</v-btn>
+      </v-card-actions>
+    </v-card>
+    </v-app>
   </div>
 </template>
 
@@ -35,5 +34,4 @@ export default {
 </script>
 
 <style>
-
 </style>

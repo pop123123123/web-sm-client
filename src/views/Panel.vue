@@ -2,8 +2,10 @@
   <md-app md-mode="reveal">
     <md-app-drawer></md-app-drawer>
     <md-app-toolbar class="" md-elevation="1">
-      <md-button class="md-primary md-raised" @click="showPopup = true;"
+
+      <md-button @click="showPopup = true;"
         >New Project / Open Project</md-button>
+
 <Menu name="Action" />
       <h3 class="md-title" style="flex: 1"></h3>
       <md-button class="md-primary md-raised">Save</md-button>
