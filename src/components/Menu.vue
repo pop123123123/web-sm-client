@@ -31,8 +31,8 @@ export default {
   data() {
     return {
       commands: [
-        { name: 'Undo', command: action.command.UNDO, shortcut: 'Ctrl+z' },
-        { name: 'Redo', command: action.command.REDO, shortcut: 'Ctrl+y' },
+        { name: 'Undo', command: action.UNDO, shortcut: 'Ctrl+z' },
+        { name: 'Redo', command: action.REDO, shortcut: 'Ctrl+y' },
         { name: 'Add', command: action.command.NEW_EMPTY_SENTENCE, shortcut: 'Ctrl+Arrow' },
         { name: 'Remove', command: action.command.DELETE, shortcut: 'Delete' },
         { name: 'Copy', command: action.COPY, shortcut: 'Ctrl+c' },

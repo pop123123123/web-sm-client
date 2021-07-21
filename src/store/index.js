@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 import mutation from './mutation-types';
 import action from './action-types';
 import { client, plugin as socketPlugin } from '../socket';
+import { undo, redo, plugin as commandsPlugin } from './commandHistory';
 
 function offsetSelection(state, targetIndex, modeAdd) {
   state.selected.forEach((element, index) => {
@@ -112,11 +113,15 @@ export default new Vuex.Store({
         client.send('ModifySegmentComboIndex', { project_name: context.state.project.name, segment_position: context.state.segments.length, new_combo_index: context.state.segments[index].comboIndex });
       });
     },
-    [action.command.DELETE]({ state }) {
+    [action.command.DELETE]() { /*
+    [action.command.DELETE]({ state }) { /*
       state.selected.sort((a, b) => a - b);
       state.selected.forEach((id, index) => {
-        client.send('RemoveSegment', { project_name: state.project.name, segment_position: id - index });
-      });
+        client.send('RemoveSegment', {
+          project_name: state.project.name,
+          segment_position: id - index
+        });
+      }); */
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
       if (modeAdd) {
@@ -156,10 +161,12 @@ export default new Vuex.Store({
     [action.CHANGE_SOCKET_ERROR]({ commit }, error) {
       commit(mutation.CHANGE_SOCKET_ERROR, error);
     },
+    [action.UNDO]: undo,
+    [action.REDO]: redo,
   },
   modules: {
   },
   getters: {
   },
-  plugins: [socketPlugin()],
+  plugins: [socketPlugin(), commandsPlugin()],
 });

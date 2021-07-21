@@ -132,7 +132,7 @@ export default {
       });
     },
     onkey(event) {
-      switch (event.code) {
+      switch (event.key) {
         case 'Backspace':
           if (event.ctrlKey) {
             this.$store.dispatch(action.command.DELETE);
@@ -154,14 +154,24 @@ export default {
             this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, 0);
           }
           break;
-        case 'KeyC':
+        case 'c':
           if (event.ctrlKey && this.$store.state.selected.length > 0) {
             this.$store.dispatch(action.COPY);
           }
           break;
-        case 'KeyV':
+        case 'v':
           if (event.ctrlKey && this.$store.state.clipboard.length > 0) {
             this.$store.dispatch(action.PASTE);
+          }
+          break;
+        case 'z':
+          if (event.ctrlKey) {
+            this.$store.dispatch(action.UNDO);
+          }
+          break;
+        case 'y':
+          if (event.ctrlKey) {
+            this.$store.dispatch(action.REDO);
           }
           break;
         default:
