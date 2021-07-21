@@ -1,5 +1,5 @@
 <template>
-  <div class="panelTable">
+  <div>
     <v-text-field
       v-model="search"
       append-icon="mdi-magnify"
@@ -22,7 +22,6 @@
       disable-sort
     >
       <template slot="no-data">
-        <!-- <div>There's nothing here. Start by adding a segment !</div> -->
         <v-btn
           @click="
             $store.dispatch(action.DELETE_PROJECT, $store.state.project.name)
@@ -52,34 +51,36 @@
       </template>
 
       <template v-slot:item.element.comboIndex="{ item }">
-        <v-btn @click="changeComboIndex(item.index, -1)" elevation="1" x-small
-          >&lt;</v-btn
+        <v-btn @click="changeComboIndex(item.index, -1)" icon>
+          <v-icon>arrow_left</v-icon>
+          </v-btn
         >
         {{ item.element.comboIndex }}
-        <v-btn @click="changeComboIndex(item.index, 1)" elevation="1" x-small
-          >&gt;</v-btn
-        >
+        <v-btn @click="changeComboIndex(item.index, 1)" icon>
+          <v-icon>arrow_right</v-icon>
+          </v-btn >
       </template>
     </v-data-table>
 
-    <md-card-actions>
-      <md-button
-        class="md-raised md-primary"
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        class="primary"
         @click="
           $store.dispatch(
             action.command.NEW_EMPTY_SENTENCE,
             $store.state.segments.length
           )
         "
-        >Add</md-button
+        >Add</v-btn
       >
-      <md-button
+      <v-btn
         :disabled="$store.state.selected.length <= 0"
-        class="md-raised md-primary"
+        class="accent"
         @click="$store.dispatch(action.command.DELETE)"
-        >Delete</md-button
+        >Delete</v-btn
       >
-    </md-card-actions>
+    </v-card-actions>
   </div>
 </template>
 
@@ -101,7 +102,9 @@ export default {
           align: 'start',
           value: 'element.sentence',
         },
-        { text: 'Index', value: 'element.comboIndex', width: '139px' },
+        {
+          text: 'Index', value: 'element.comboIndex', width: '139px', align: 'center',
+        },
       ],
     };
   },

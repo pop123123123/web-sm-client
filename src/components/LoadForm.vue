@@ -1,20 +1,18 @@
 <template>
-  <div class="hello">
-    <v-app>
-<!-- TODO Add a layout ? -->
+  <div>
     <v-card>
       <v-card-title>Load File</v-card-title>
       <v-card-text>
-        <div class="md-subheading">
           <label>Choose a file to load:</label>
-        </div>
-        <input type="file" id="file" name="file" accept=".p00p" />
+        <v-file-input label="Project file"
+  truncate-length="15"
+></v-file-input>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="loadFile">Load</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn color="secondary" text @click="loadFile">Load</v-btn>
       </v-card-actions>
     </v-card>
-    </v-app>
   </div>
 </template>
 
