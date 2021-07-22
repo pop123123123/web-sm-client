@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ProjectPopUp v-if="showPopup" @closed="showPopup = false" />
     <v-row justify="space-between">
       <v-col>
         <v-card>
@@ -26,23 +25,13 @@
 <script>
 import Video from '@/components/Video.vue';
 import PanelTable from '@/components/PanelTable.vue';
-import ProjectPopUp from '@/components/ProjectPopUp.vue';
 
 export default {
   name: 'Panel',
-  props: {},
   components: {
     Video,
     PanelTable,
-    ProjectPopUp,
   },
-  data() {
-    return {
-      showPopup: false,
-    };
-  },
-  methods: {},
-  computed: {},
 };
 </script>
 
