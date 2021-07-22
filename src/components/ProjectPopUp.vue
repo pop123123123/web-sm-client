@@ -6,13 +6,13 @@
       :persistent="required"
       width="500"
     >
-      <v-tabs fixed-tabs color="primary">
+      <v-tabs fixed-tabs color="primary" v-model="tab">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <v-tab href="#join"> Join </v-tab>
         <v-tab-item value="join">
           <v-card>
             <v-card-text>
-              <JoinPopup @join="$emit('input', false)" />
+              <JoinPopup @join="$emit('input', false)" @wantToCreate="tab='create'"/>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -44,6 +44,9 @@ import JoinPopup from './JoinPopup.vue';
 
 export default {
   name: 'ProjectPopUp',
+  data: () => ({
+    tab: null,
+  }),
   props: {
     value: Boolean,
     required: Boolean,
