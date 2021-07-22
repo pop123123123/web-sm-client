@@ -20,7 +20,7 @@
       :search="search"
       disable-sort
       fixed-header
-      height="calc(100vh - 290px)"
+      height="calc(100vh - 264px)"
     >
       <template slot="no-data">
         <v-btn

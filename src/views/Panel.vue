@@ -3,9 +3,6 @@
     <v-row justify="space-between">
       <v-col>
         <v-card>
-          <v-card-title>
-            <div>{{ $store.state.project.name }}</div>
-          </v-card-title>
           <v-card-text>
             <div>Seed:{{ $store.state.project.seed }}</div>
             <div>
