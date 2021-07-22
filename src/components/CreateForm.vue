@@ -43,6 +43,10 @@ export default {
   methods: {
     validateProject() {
       if (this.formProject.videoUrls.length > 0) {
+        // Check if seed is null or <empty string>
+        this.formProject.seed = this.formProject.seed
+          ? this.formProject.seed
+          : String(Math.floor(Math.random() * 100000));
         this.sendFormValid();
         this.$store.dispatch('CREATE_PROJECT', this.formProject);
       } else {

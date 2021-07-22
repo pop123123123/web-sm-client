@@ -128,7 +128,7 @@ export default new Vuex.Store({
     [action.LIST_PROJECTS]() {
       client.send('ListProjects');
     },
-    [action.DELETE_PROJECT](context, projectName) { // unused for now
+    [action.DELETE_PROJECT](context, projectName) {
       client.send('DeleteProject', { project_name: projectName });
     },
     [action.JOIN_PROJECT](context, projectName) {
