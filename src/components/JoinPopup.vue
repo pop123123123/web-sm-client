@@ -12,7 +12,7 @@
           <v-toolbar-title>Projects</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark> New Project </v-btn>
+          <v-btn color="primary" dark @click="$emit('wantToCreate')"> New Project </v-btn>
         </v-toolbar>
       </template>
       <template slot="no-data">
