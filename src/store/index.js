@@ -79,8 +79,8 @@ export default new Vuex.Store({
     [mutation.USER_JOINED_PROJECT](state, user) {
       state.users.push(user);
     },
-    [mutation.USER_LEFT_PROJECT](state, user) {
-      Vue.set(state, 'users', state.users.filter((u) => u !== user));
+    [mutation.USER_LEFT_PROJECT](state, { user }) {
+      Vue.set(state, 'users', state.users.filter((u) => u.user !== user));
     },
     [mutation.CHANGE_LIST_PROJECTS](state, { projects }) {
       Vue.set(state, 'projects', projects);
@@ -133,6 +133,9 @@ export default new Vuex.Store({
     },
     [action.JOIN_PROJECT](context, projectName) {
       client.send('JoinProject', { project_name: projectName });
+    },
+    [action.LEFT_PROJECT](context, projectName) {
+      client.send('LeftProject', { project_name: projectName });
     },
     [action.CHANGE_SOCKET_ERROR]({ commit }, error) {
       commit(mutation.CHANGE_SOCKET_ERROR, error);

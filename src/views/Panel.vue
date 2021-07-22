@@ -8,6 +8,9 @@
           </v-card-title>
           <v-card-text>
             <div>Seed:{{ $store.state.project.seed }}</div>
+            <div>
+              Other users connected : {{ $store.state.users.length}}
+            </div>
             <PanelTable />
           </v-card-text>
         </v-card>
