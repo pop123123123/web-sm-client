@@ -134,9 +134,6 @@ export default new Vuex.Store({
     [action.JOIN_PROJECT](context, projectName) {
       client.send('JoinProject', { project_name: projectName });
     },
-    [action.LEFT_PROJECT](context, projectName) {
-      client.send('LeftProject', { project_name: projectName });
-    },
     [action.CHANGE_SOCKET_ERROR]({ commit }, error) {
       commit(mutation.CHANGE_SOCKET_ERROR, error);
     },
