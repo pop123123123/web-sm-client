@@ -1,33 +1,33 @@
 <template>
   <div>
     <form @submit.prevent="validateProject">
-        <v-card elevation="0">
-          <v-card-title>Project Settings</v-card-title>
-          <v-card-text>
-            <v-text-field v-model="formProject.name" label="Name" required />
-            <v-text-field
-              v-model="formProject.seed"
-              hint="Optional, random by default"
-              label="Seed"
-            />
-            <v-combobox
-              v-model="formProject.videoUrls"
-              label="Copy youtube url or code"
-              multiple
-              chips
-            ></v-combobox>
-            <div>
-              <p class="error--text" v-if="formProject.videoUrls.length < 1">{{
-                errorMessage
-              }}</p>
-            </div>
-          </v-card-text>
+      <v-card elevation="0">
+        <v-card-title>Project Settings</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="formProject.name" label="Name" required />
+          <v-text-field
+            v-model="formProject.seed"
+            hint="Optional, random by default"
+            label="Seed"
+          />
+          <v-combobox
+            v-model="formProject.videoUrls"
+            label="Copy youtube url or code"
+            multiple
+            chips
+          ></v-combobox>
+          <div>
+            <p class="error--text" v-if="formProject.videoUrls.length < 1">
+              {{ errorMessage }}
+            </p>
+          </div>
+        </v-card-text>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="secondary" type="submit" text>Create</v-btn>
-          </v-card-actions>
-        </v-card>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" type="submit" text>Create</v-btn>
+        </v-card-actions>
+      </v-card>
     </form>
   </div>
 </template>

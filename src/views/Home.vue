@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProjectPopUp @closed=" $router.push(`/panel`)" required></ProjectPopUp>
+    <ProjectPopUp :value="true" @input="$router.push('/panel')" required></ProjectPopUp>
   </div>
 </template>
 

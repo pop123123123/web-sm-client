@@ -17,9 +17,10 @@
       item-key="index"
       show-select
       :items-per-page="-1"
-      class="elevation-1"
       :search="search"
       disable-sort
+      fixed-header
+      height="calc(100vh - 290px)"
     >
       <template slot="no-data">
         <v-btn
