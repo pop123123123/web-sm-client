@@ -51,4 +51,86 @@ commands[action.command.DELETE] = class extends Command {
   }
 };
 
+commands[action.command.NEW_EMPTY_SENTENCE] = class extends Command {
+  constructor({ state }, index) {
+    super();
+    console.log(state); // TODO don't use the state
+    this.index = index;
+  }
+
+  do({ state }) {
+    client.send('CreateSegment', { project_name: state.project.name, segment_sentence: '', position: this.index ?? state.segments.length });
+  }
+
+  undo({ state }) {
+    client.send('RemoveSegment', { project_name: state.project.name, segment_position: this.index });
+  }
+};
+
+commands[action.command.CHANGE_COMBO_INDEX] = class extends Command {
+  constructor({ state }, { row, newComboIndex }) {
+    super();
+    this.row = row;
+    this.newCombo = newComboIndex;
+    this.oldCombo = state.segments[row].comboIndex;
+  }
+
+  do({ state }) {
+    client.send('ModifySegmentComboIndex', { project_name: state.project.name, segment_position: this.row, new_combo_index: this.newCombo });
+  }
+
+  undo({ state }) {
+    client.send('ModifySegmentComboIndex', { project_name: state.project.name, segment_position: this.row, new_combo_index: this.oldCombo });
+  }
+};
+
+commands[action.command.CHANGE_SENTENCE] = class extends Command {
+  constructor({ state }, { index, newSentence }) {
+    super();
+    this.index = index;
+    this.newSentence = newSentence;
+    this.oldSentence = state.segments[index].sentence;
+  }
+
+  do({ state }) {
+    client.send('ModifySegmentSentence', {
+      project_name: state.project.name,
+      segment_position: this.index,
+      new_sentence: this.newSentence,
+    });
+  }
+
+  undo({ state }) {
+    client.send('ModifySegmentSentence', {
+      project_name: state.project.name,
+      segment_position: this.index,
+      new_sentence: this.oldSentence,
+    });
+  }
+};
+
+commands[action.command.DUPLICATE_SENTENCE] = class extends Command {
+  constructor({ state }, indexList) {
+    super();
+    this.indexList = indexList;
+    console.log(state);
+  }
+
+  do({ state }) {
+    this.indexList.sort((a, b) => a - b);
+    this.indexList.forEach((indexElement, index) => {
+      client.send('CreateSegment',
+        {
+          project_name: state.project.name,
+          segment_sentence: state.segments[indexElement].sentence,
+          position: state.segments.length + index,
+        });
+      client.send('ModifySegmentComboIndex', { project_name: state.project.name, segment_position: state.segments.length + index, new_combo_index: state.segments[indexElement].comboIndex });
+    });
+  }
+
+  undo({ state }) {
+    this.indexList.forEach((indexElement, index) => client.send('RemoveSegment', { project_name: state.project.name, segment_position: state.segments.length - index - 1 }));
+  }
+};
 export default commands;

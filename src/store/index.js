@@ -99,29 +99,11 @@ export default new Vuex.Store({
     [action.CREATE_PROJECT](context, newProject) {
       client.send('CreateProject', { project_name: newProject.name, seed: newProject.seed, urls: newProject.videoUrls });
     },
-    [action.command.NEW_EMPTY_SENTENCE](context, index) {
-      client.send('CreateSegment', { project_name: context.state.project.name, segment_sentence: '', position: index ?? context.state.segments.length });
+    [action.command.NEW_EMPTY_SENTENCE]() {
     },
-    [action.command.DUPLICATE_SENTENCE](context, indexList) {
-      indexList.forEach((index) => {
-        client.send('CreateSegment',
-          {
-            project_name: context.state.project.name,
-            segment_sentence: context.state.segments[index].sentence,
-            position: context.state.segments.length,
-          });
-        client.send('ModifySegmentComboIndex', { project_name: context.state.project.name, segment_position: context.state.segments.length, new_combo_index: context.state.segments[index].comboIndex });
-      });
+    [action.command.DUPLICATE_SENTENCE]() {
     },
-    [action.command.DELETE]() { /*
-    [action.command.DELETE]({ state }) { /*
-      state.selected.sort((a, b) => a - b);
-      state.selected.forEach((id, index) => {
-        client.send('RemoveSegment', {
-          project_name: state.project.name,
-          segment_position: id - index
-        });
-      }); */
+    [action.command.DELETE]() {
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
       if (modeAdd) {
@@ -139,15 +121,9 @@ export default new Vuex.Store({
     [action.PASTE](context) {
       context.dispatch(action.command.DUPLICATE_SENTENCE, context.state.clipboard);
     },
-    [action.command.CHANGE_COMBO_INDEX](context, { row, newComboIndex }) {
-      client.send('ModifySegmentComboIndex', { project_name: context.state.project.name, segment_position: row, new_combo_index: newComboIndex });
+    [action.command.CHANGE_COMBO_INDEX]() {
     },
-    [action.command.CHANGE_SENTENCE]({ state }, { index, newSentence }) {
-      client.send('ModifySegmentSentence', {
-        project_name: state.project.name,
-        segment_position: index,
-        new_sentence: newSentence,
-      });
+    [action.command.CHANGE_SENTENCE]() {
     },
     [action.LIST_PROJECTS]() {
       client.send('ListProjects');
