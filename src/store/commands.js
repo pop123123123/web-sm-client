@@ -52,14 +52,14 @@ commands[action.command.DELETE] = class extends Command {
 };
 
 commands[action.command.NEW_EMPTY_SENTENCE] = class extends Command {
+  // eslint-disable-next-line no-unused-vars
   constructor({ state }, index) {
     super();
-    console.log(state); // TODO don't use the state
-    this.index = index;
+    this.index = index ?? state.segments.length;
   }
 
   do({ state }) {
-    client.send('CreateSegment', { project_name: state.project.name, segment_sentence: '', position: this.index ?? state.segments.length });
+    client.send('CreateSegment', { project_name: state.project.name, segment_sentence: '', position: this.index });
   }
 
   undo({ state }) {
@@ -110,27 +110,28 @@ commands[action.command.CHANGE_SENTENCE] = class extends Command {
 };
 
 commands[action.command.DUPLICATE_SENTENCE] = class extends Command {
+  // eslint-disable-next-line no-unused-vars
   constructor({ state }, indexList) {
     super();
     this.indexList = indexList;
-    console.log(state);
+    this.indexList.sort((a, b) => b - a);
+    this.segLength = state.segments.length;
   }
 
   do({ state }) {
-    this.indexList.sort((a, b) => a - b);
-    this.indexList.forEach((indexElement, index) => {
+    this.indexList.forEach((indexElement) => {
       client.send('CreateSegment',
         {
           project_name: state.project.name,
           segment_sentence: state.segments[indexElement].sentence,
-          position: state.segments.length + index,
+          position: state.segments.length,
         });
-      client.send('ModifySegmentComboIndex', { project_name: state.project.name, segment_position: state.segments.length + index, new_combo_index: state.segments[indexElement].comboIndex });
+      client.send('ModifySegmentComboIndex', { project_name: state.project.name, segment_position: state.segments.length, new_combo_index: state.segments[indexElement].comboIndex });
     });
   }
 
   undo({ state }) {
-    this.indexList.forEach((indexElement, index) => client.send('RemoveSegment', { project_name: state.project.name, segment_position: state.segments.length - index - 1 }));
+    this.indexList.forEach(() => client.send('RemoveSegment', { project_name: state.project.name, segment_position: this.segLength }));
   }
 };
 export default commands;

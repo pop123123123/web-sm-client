@@ -76,11 +76,11 @@ export default new Vuex.Store({
       state.project.videoUrls = videoUrls;
       state.segments = segments.map(({ s, i }) => ({ sentence: s, comboIndex: i }));
     },
-    [mutation.USER_JOINED_PROJECT](state, user) {
+    [mutation.USER_JOINED_PROJECT](state, { user }) {
       state.users.push(user);
     },
     [mutation.USER_LEFT_PROJECT](state, { user }) {
-      Vue.set(state, 'users', state.users.filter((u) => u.user !== user));
+      Vue.set(state, 'users', state.users.filter((u) => u !== user));
     },
     [mutation.CHANGE_LIST_PROJECTS](state, { projects }) {
       Vue.set(state, 'projects', projects);
