@@ -1,13 +1,16 @@
 <template>
-    <v-app-bar dark app color="primary">
-      <Menu name="Edit"/>
-      <v-spacer></v-spacer>
-      {{$store.state.project.name}}
-      <v-btn text @click="showPopup = true">Change Project</v-btn>
-      <v-btn text>Save</v-btn>
-      <v-btn text>Export</v-btn>
-      <ProjectPopUp v-model="showPopup"/>
-    </v-app-bar>
+  <v-app-bar dark app color="primary">
+    <Menu name="Edit" />
+    <v-spacer></v-spacer>
+    <v-app-bar-title>
+      {{ $store.state.project.name }}
+    </v-app-bar-title>
+
+    <v-btn text @click="showPopup = true">Change Project</v-btn>
+    <v-btn text>Save</v-btn>
+    <v-btn text>Export</v-btn>
+    <ProjectPopUp v-model="showPopup" />
+  </v-app-bar>
 </template>
 
 <script>
