@@ -110,7 +110,7 @@ export default new Vuex.Store({
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
       if (modeAdd) {
-        commit(mutation.ADD_SELECTED, newIndex);
+        if (!state.selected.includes(newIndex)) { commit(mutation.ADD_SELECTED, newIndex); }
       } else {
         commit(
           mutation.REMOVE_SELECTED,
