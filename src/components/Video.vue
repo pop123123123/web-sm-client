@@ -55,6 +55,10 @@ export default {
   },
   mounted() {
     this.startPreview();
+    this.$store.state.videoComponent = this;
+  },
+  destroyed() {
+    this.$store.state.videoComponent = undefined;
   },
 };
 </script>
