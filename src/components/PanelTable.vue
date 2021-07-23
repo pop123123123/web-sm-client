@@ -196,7 +196,7 @@ export default {
           break;
         case 'ArrowDown':
           if (event.ctrlKey) {
-            const index = this.$store.state.active ?? len - 1 + 1;
+            const index = this.$store.state.active == null ? len : this.$store.state.active + 1;
             this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, index);
             this.$store.commit(mutation.SELECT_ACTIVE);
           } else if (this.hasActive && this.$store.state.active + 1 < len) {
@@ -306,7 +306,7 @@ export default {
   watch: {
     indexActive(newActiveIndex, oldActiveIndex) {
       if (
-        (oldActiveIndex || oldActiveIndex === 0)
+        (oldActiveIndex || oldActiveIndex === 0)// TODO a fix
         && newActiveIndex !== oldActiveIndex
         && this.$refs.table.$el.querySelector('tbody').children[oldActiveIndex]
       ) {
