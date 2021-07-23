@@ -107,7 +107,7 @@ export default new Vuex.Store({
     [mutation.ADD_ACTIVE](state, childIndex) {
       state.active = childIndex;
     },
-    [mutation.PREVIEW](state, { sentence, comboIndex, data }) {
+    [mutation.PREVIEW](state, { s: sentence, i: comboIndex, data }) {
       if (!(sentence in state.previews)) {
         state.previews[sentence] = {};
       }
