@@ -20,6 +20,7 @@ const mutation = {
   REMOVE_PROJECT: 'REMOVE_PROJECT',
   JOINED_USERS: 'JOINED_USERS',
   ADD_ACTIVE: 'ADD_ACTIVE',
+  PREVIEW: 'PREVIEW',
 };
 
 export default mutation;
