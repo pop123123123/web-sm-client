@@ -108,6 +108,7 @@
 
 <script>
 import action from '@/store/action-types';
+import mutation from '@/store/mutation-types';
 
 export default {
   name: 'PanelTable',
@@ -174,6 +175,7 @@ export default {
     },
     rowClick(item) {
       this.activate(item.index);
+      this.$store.commit(mutation.SELECT_ACTIVE);
     },
     activate(index) {
       if (index !== this.$store.state.active) {
@@ -196,8 +198,17 @@ export default {
           if (event.ctrlKey) {
             const index = this.$store.state.active ?? len - 1 + 1;
             this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, index);
+            this.$store.commit(mutation.SELECT_ACTIVE);
           } else if (this.hasActive && this.$store.state.active + 1 < len) {
             this.activate(this.$store.state.active + 1);
+            if (event.shiftKey) {
+              this.$store.dispatch(action.CHANGE_SELECTION, {
+                newIndex: this.$store.state.active,
+                modeAdd: true,
+              });
+            } else {
+              this.$store.commit(mutation.SELECT_ACTIVE);
+            }
           }
           break;
         case 'ArrowUp':
@@ -207,8 +218,17 @@ export default {
               action.command.NEW_EMPTY_SENTENCE,
               newIndexSegment,
             );
+            this.$store.commit(mutation.SELECT_ACTIVE);
           } else if (this.$store.state.active - 1 >= 0) {
             this.activate(this.$store.state.active - 1);
+            if (event.shiftKey) {
+              this.$store.dispatch(action.CHANGE_SELECTION, {
+                newIndex: this.$store.state.active,
+                modeAdd: true,
+              });
+            } else {
+              this.$store.commit(mutation.SELECT_ACTIVE);
+            }
           }
           break;
         case 'ArrowLeft':
