@@ -52,7 +52,6 @@ commands[action.command.DELETE] = class extends Command {
 };
 
 commands[action.command.NEW_EMPTY_SENTENCE] = class extends Command {
-  // eslint-disable-next-line no-unused-vars
   constructor({ state }, index) {
     super();
     this.index = index ?? state.segments.length;
@@ -110,7 +109,6 @@ commands[action.command.CHANGE_SENTENCE] = class extends Command {
 };
 
 commands[action.command.DUPLICATE_SENTENCE] = class extends Command {
-  // eslint-disable-next-line no-unused-vars
   constructor({ state }, indexList) {
     super();
     this.indexList = indexList;
