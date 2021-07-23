@@ -13,7 +13,7 @@
         </v-card>
       </v-col>
       <v-col>
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title> Preview </v-card-title>
           <Video :sentence="videoSentence" :comboIndex="videoComboIndex" />
         </v-card>
