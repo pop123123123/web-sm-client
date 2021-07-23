@@ -18,6 +18,7 @@ const mutation = {
   NEW_PROJECT: 'NEW_PROJECT',
   REMOVE_PROJECT: 'REMOVE_PROJECT',
   JOINED_USERS: 'JOINED_USERS',
+  ADD_ACTIVE: 'ADD_ACTIVE',
 };
 
 export default mutation;

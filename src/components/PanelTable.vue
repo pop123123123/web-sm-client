@@ -9,9 +9,11 @@
     ></v-text-field>
     <v-data-table
       :value="selected"
+      ref="table"
       hide-default-footer
       @item-selected="onItemSelected"
       @toggle-select-all="selectAll"
+      @click:row="rowClick"
       :headers="headers"
       :items="lines"
       item-key="index"
@@ -63,10 +65,7 @@
           <template v-slot:input>
             <v-text-field
               v-model="editComboIndex"
-              :rules="[
-                (v) =>
-                 editComboIndexError,
-              ]"
+              :rules="[(v) => editComboIndexError]"
               label="Edit"
               single-line
             ></v-text-field>
@@ -142,6 +141,7 @@ export default {
     },
     onItemSelected(sel) {
       const newIndex = sel.item ? sel.item.index : sel.currentItem.index;
+      this.activate(newIndex);
       this.$store.dispatch(action.CHANGE_SELECTION, {
         newIndex,
         modeAdd: sel.value,
@@ -165,6 +165,12 @@ export default {
         this.editComboIndexError = 'Warning : Only numbers are accepted';
       }
     },
+    rowClick(item) {
+      this.activate(item.index);
+    },
+    activate(index) {
+      this.$store.dispatch(action.MAKE_ACTIVE, index);
+    },
     onkey(event) {
       switch (event.key) {
         case 'Backspace':
@@ -177,15 +183,28 @@ export default {
           break;
         case 'ArrowDown':
           if (event.ctrlKey) {
+            const newIndexSegment = this.$store.state.active + 1;
+            console.log(newIndexSegment);
             this.$store.dispatch(
               action.command.NEW_EMPTY_SENTENCE,
-              this.lines.length,
+              newIndexSegment,
             );
+          } else if (
+            this.$store.state.active + 1
+            < this.$store.state.segments.length
+          ) {
+            this.activate(this.$store.state.active + 1);
           }
           break;
         case 'ArrowUp':
           if (event.ctrlKey) {
-            this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, 0);
+            const newIndexSegment = this.$store.state.active;
+            this.$store.dispatch(
+              action.command.NEW_EMPTY_SENTENCE,
+              newIndexSegment,
+            );
+          } else if (this.$store.state.active - 1 >= 0) {
+            this.activate(this.$store.state.active - 1);
           }
           break;
         case 'c':
@@ -232,6 +251,9 @@ export default {
     selected() {
       return this.$store.state.selected.map((element) => this.lines[element]);
     },
+    indexActive() {
+      return this.$store.state.active;
+    },
   },
   created() {
     window.addEventListener('keydown', this.onkey);
@@ -239,9 +261,27 @@ export default {
   beforeDestroy() {
     window.removeEventListener('keydown', this.onkey);
   },
-  watch: {},
+  watch: {
+    indexActive(newActiveIndex, oldActiveIndex) {
+      if (
+        (oldActiveIndex || oldActiveIndex === 0)
+        && newActiveIndex !== oldActiveIndex
+        && this.$refs.table.$el.querySelector('tbody').children[oldActiveIndex]
+      ) {
+        this.$refs.table.$el.querySelector('tbody').children[
+          oldActiveIndex
+        ].style.background = null;
+      }
+      this.$refs.table.$el.querySelector('tbody').children[
+        newActiveIndex
+      ].style.background = '#82c0dd';
+    },
+  },
 };
 </script>
 
 <style>
+tr.active {
+  background: #82c0dd !important;
+}
 </style>
