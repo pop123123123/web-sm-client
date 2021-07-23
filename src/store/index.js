@@ -29,6 +29,7 @@ export default new Vuex.Store({
     projects: [],
     users: [],
     socketError: '',
+    active: null,
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -97,6 +98,9 @@ export default new Vuex.Store({
     [mutation.JOINED_USERS](state, { users }) {
       state.users = users;
     },
+    [mutation.ADD_ACTIVE](state, childIndex) {
+      state.active = childIndex;
+    },
   },
   actions: {
     [action.CREATE_PROJECT](context, newProject) {
@@ -142,6 +146,9 @@ export default new Vuex.Store({
     },
     [action.UNDO]: undo,
     [action.REDO]: redo,
+    [action.MAKE_ACTIVE]({ commit }, childIndex) {
+      commit(mutation.ADD_ACTIVE, childIndex);
+    },
   },
   modules: {
   },
