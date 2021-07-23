@@ -62,6 +62,9 @@ export default new Vuex.Store({
     [mutation.RESET_SELECTED](state) {
       state.selected = [];
     },
+    [mutation.SELECT_ACTIVE](state) {
+      state.selected = state.active == null ? [] : [state.active];
+    },
     [mutation.COPY_SELECTED](state) {
       state.clipboard = [];
       state.selected.forEach((element) => state.clipboard.push(element));

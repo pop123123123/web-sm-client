@@ -15,6 +15,7 @@
             label="Copy youtube url or code"
             multiple
             chips
+            :items="['_ZZ8oyZUGn8']"
           ></v-combobox>
           <div>
             <p class="error--text" v-if="formProject.videoUrls.length < 1">
