@@ -1,6 +1,6 @@
 <template>
   <div>
-    <video ref="video" controls>
+    <video ref="video">
       <source :src="src" type="video/webm">
       Sorry, your browser doesn't support embedded videos.
     </video>
@@ -35,10 +35,12 @@ export default {
       if (blob === undefined) return;
 
       // set video src
-      this.src = URL.createObjectURL(blob);
       const videoElem = this.$refs.video;
+      videoElem.pause();
+      this.src = window.URL.createObjectURL(blob);
 
       // start video
+      videoElem.load();
       videoElem.currentTime = 0;
       videoElem.play();
     },
@@ -56,3 +58,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+video {
+  width: 100%;
+  min-width: 200px;
+}
+</style>
