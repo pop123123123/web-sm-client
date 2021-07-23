@@ -21,6 +21,7 @@ const mutation = {
   JOINED_USERS: 'JOINED_USERS',
   ADD_ACTIVE: 'ADD_ACTIVE',
   PREVIEW: 'PREVIEW',
+  PREVIEW_SEGMENT: 'PREVIEW_SEGMENT',
 };
 
 export default mutation;

@@ -48,11 +48,14 @@ export default new Vuex.Store({
     [mutation.NEW_SEGMENT](state, { segment: { s, i }, row }) {
       state.segments.splice(row, 0, { sentence: s, comboIndex: i });
       offsetSelection(state, row, 1);
+      if (state.active >= row) state.active += 1;
     },
     [mutation.REMOVE_SEGMENT](state, { row }) {
       state.segments.splice(row, 1);
       state.selected = state.selected.filter((element) => element !== row);
       offsetSelection(state, row, 0);
+      if (state.active > row) state.active -= 1;
+      if (state.active === row) state.active = null;
     },
     [mutation.CHANGE_COMBO_INDEX](state, { row, comboIndex }) {
       state.segments[row].comboIndex = comboIndex;
@@ -115,6 +118,11 @@ export default new Vuex.Store({
       state.previews[sentence][comboIndex] = base64toBlob(data, 'video/webm');
       state.lastPreview = { sentence, comboIndex };
     },
+    [mutation.PREVIEW_SEGMENT](state, { sentence, comboIndex }) {
+      if (state.previews[sentence] && state.previews[sentence][comboIndex] !== undefined) {
+        state.lastPreview = { sentence, comboIndex };
+      }
+    },
   },
   actions: {
     [action.CREATE_PROJECT](context, newProject) {
@@ -163,8 +171,9 @@ export default new Vuex.Store({
     [action.MAKE_ACTIVE]({ commit }, childIndex) {
       commit(mutation.ADD_ACTIVE, childIndex);
     },
-    [action.PREVIEW_ACTIVE](context) {
-      const video = context.state.videoComponent;
+    [action.PREVIEW_ACTIVE]({ state, commit }) {
+      commit(mutation.PREVIEW_SEGMENT, state.segments[state.active]);
+      const video = state.videoComponent;
       if (video !== undefined) {
         video.startPreview();
       }
