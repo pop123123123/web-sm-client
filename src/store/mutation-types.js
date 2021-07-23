@@ -17,6 +17,7 @@ const mutation = {
   CHANGE_SOCKET_ERROR: 'CHANGE_SOCKET_ERROR',
   NEW_PROJECT: 'NEW_PROJECT',
   REMOVE_PROJECT: 'REMOVE_PROJECT',
+  JOINED_USERS: 'JOINED_USERS',
 };
 
 export default mutation;

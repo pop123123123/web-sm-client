@@ -94,6 +94,9 @@ export default new Vuex.Store({
     [mutation.REMOVE_PROJECT](state, { name }) {
       state.projects = state.projects.filter((project) => project.name !== name);
     },
+    [mutation.JOINED_USERS](state, { users }) {
+      state.users = users;
+    },
   },
   actions: {
     [action.CREATE_PROJECT](context, newProject) {
