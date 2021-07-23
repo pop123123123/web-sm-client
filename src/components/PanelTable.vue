@@ -141,10 +141,13 @@ export default {
       });
     },
     onItemSelected(sel) {
+      const newIndex = sel.item ? sel.item.index : sel.currentItem.index;
+      console.log(newIndex);
       this.$store.dispatch(action.CHANGE_SELECTION, {
-        newIndex: sel.item.index,
+        newIndex,
         modeAdd: sel.value,
       });
+      console.log(this.$store.state.selected);
     },
     save(newValue) {
       this.$store.dispatch(action.command.CHANGE_SENTENCE, {
