@@ -54,12 +54,27 @@
       <template v-slot:item.element.comboIndex="{ item }">
         <v-btn @click="changeComboIndex(item.index, -1)" icon>
           <v-icon>arrow_left</v-icon>
-          </v-btn
+        </v-btn>
+        <v-edit-dialog
+          @save="saveComboIndex(item)"
+          @open="editComboIndex = item.element.comboIndex"
         >
-        {{ item.element.comboIndex }}
+          {{ item.element.comboIndex }}
+          <template v-slot:input>
+            <v-text-field
+              v-model="editComboIndex"
+              :rules="[
+                (v) =>
+                 editComboIndexError,
+              ]"
+              label="Edit"
+              single-line
+            ></v-text-field>
+          </template>
+        </v-edit-dialog>
         <v-btn @click="changeComboIndex(item.index, 1)" icon>
           <v-icon>arrow_right</v-icon>
-          </v-btn >
+        </v-btn>
       </template>
     </v-data-table>
 
@@ -96,6 +111,8 @@ export default {
     return {
       action,
       editSentence: '',
+      editComboIndex: '',
+      editComboIndexError: '',
       search: '',
       headers: [
         {
@@ -104,7 +121,10 @@ export default {
           value: 'element.sentence',
         },
         {
-          text: 'Index', value: 'element.comboIndex', width: '139px', align: 'center',
+          text: 'Index',
+          value: 'element.comboIndex',
+          width: '139px',
+          align: 'center',
         },
       ],
     };
@@ -131,6 +151,18 @@ export default {
         index: newValue.index,
         newSentence: this.editSentence,
       });
+    },
+    saveComboIndex(newValue) {
+      const editCINumber = Number(this.editComboIndex);
+      if (editCINumber || editCINumber === 0) {
+        this.$store.dispatch(action.command.CHANGE_COMBO_INDEX, {
+          row: newValue.index,
+          newComboIndex: Number(this.editComboIndex),
+        });
+        this.editComboIndexError = true;
+      } else {
+        this.editComboIndexError = 'Warning : Only numbers are accepted';
+      }
     },
     onkey(event) {
       switch (event.key) {
