@@ -261,6 +261,11 @@ export default {
             this.$store.dispatch(action.REDO);
           }
           break;
+        case ' ':
+          if (event.ctrlKey) {
+            this.$store.dispatch(action.PREVIEW_ACTIVE);
+          }
+          break;
         default:
           break;
       }

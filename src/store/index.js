@@ -33,6 +33,7 @@ export default new Vuex.Store({
     users: [],
     socketError: '',
     active: null,
+    videoComponent: undefined,
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -161,6 +162,12 @@ export default new Vuex.Store({
     [action.REDO]: redo,
     [action.MAKE_ACTIVE]({ commit }, childIndex) {
       commit(mutation.ADD_ACTIVE, childIndex);
+    },
+    [action.PREVIEW_ACTIVE](context) {
+      const video = context.state.videoComponent;
+      if (video !== undefined) {
+        video.startPreview();
+      }
     },
   },
   modules: {
