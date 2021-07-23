@@ -32,12 +32,16 @@
           >delete project
         </v-btn>
       </template>
-      <template v-slot:item.element.sentence="props">
+      <template v-slot:item.element.sentence="{ item }">
         <v-edit-dialog
-          @save="save(props.item)"
-          @open="editSentence = props.item.element.sentence"
+          :ref="`dialog_${item.index}`"
+          @save="save(item)"
+          @open="
+            activate(item.index);
+            editSentence = item.element.sentence;
+          "
         >
-          {{ props.item.element.sentence }}
+          {{ item.element.sentence }}
           <template v-slot:input>
             <v-text-field
               v-model="editSentence"
@@ -59,7 +63,10 @@
         </v-btn>
         <v-edit-dialog
           @save="saveComboIndex(item)"
-          @open="editComboIndex = item.element.comboIndex"
+          @open="
+            activate(item.index);
+            editComboIndex = item.element.comboIndex;
+          "
         >
           {{ item.element.comboIndex }}
           <template v-slot:input>
@@ -169,9 +176,13 @@ export default {
       this.activate(item.index);
     },
     activate(index) {
-      this.$store.dispatch(action.MAKE_ACTIVE, index);
+      if (index !== this.$store.state.active) {
+        this.$store.dispatch(action.MAKE_ACTIVE, index);
+        this.$refs[`dialog_${index}`].isActive = true;
+      }
     },
     onkey(event) {
+      const len = this.$store.state.segments.length;
       switch (event.key) {
         case 'Backspace':
           if (event.ctrlKey) {
@@ -183,28 +194,31 @@ export default {
           break;
         case 'ArrowDown':
           if (event.ctrlKey) {
-            const newIndexSegment = this.$store.state.active + 1;
-            console.log(newIndexSegment);
-            this.$store.dispatch(
-              action.command.NEW_EMPTY_SENTENCE,
-              newIndexSegment,
-            );
-          } else if (
-            this.$store.state.active + 1
-            < this.$store.state.segments.length
-          ) {
+            const index = this.$store.state.active ?? len - 1 + 1;
+            this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, index);
+          } else if (this.hasActive && this.$store.state.active + 1 < len) {
             this.activate(this.$store.state.active + 1);
           }
           break;
         case 'ArrowUp':
           if (event.ctrlKey) {
-            const newIndexSegment = this.$store.state.active;
+            const newIndexSegment = this.$store.state.active ?? 0;
             this.$store.dispatch(
               action.command.NEW_EMPTY_SENTENCE,
               newIndexSegment,
             );
           } else if (this.$store.state.active - 1 >= 0) {
             this.activate(this.$store.state.active - 1);
+          }
+          break;
+        case 'ArrowLeft':
+          if (this.hasActive) {
+            this.changeComboIndex(this.$store.state.active, -1);
+          }
+          break;
+        case 'ArrowRight':
+          if (this.hasActive) {
+            this.changeComboIndex(this.$store.state.active, 1);
           }
           break;
         case 'c':
@@ -254,6 +268,9 @@ export default {
     indexActive() {
       return this.$store.state.active;
     },
+    hasActive() {
+      return this.$store.state.active != null;
+    },
   },
   created() {
     window.addEventListener('keydown', this.onkey);
@@ -272,6 +289,8 @@ export default {
           oldActiveIndex
         ].style.background = null;
       }
+      const dialog = this.$refs[`dialog_${oldActiveIndex}`];
+      dialog?.cancel();
       this.$refs.table.$el.querySelector('tbody').children[
         newActiveIndex
       ].style.background = '#82c0dd';
@@ -283,5 +302,10 @@ export default {
 <style>
 tr.active {
   background: #82c0dd !important;
+}
+tr > td:nth-child(3) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
