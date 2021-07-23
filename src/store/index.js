@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import { base64toBlob } from '@/utils/base64';
 import mutation from './mutation-types';
 import action from './action-types';
 import { client, plugin as socketPlugin } from '../socket';
@@ -24,6 +25,8 @@ export default new Vuex.Store({
       seed: null,
       videoUrls: [],
     },
+    previews: {},
+    lastPreview: {},
     selected: [],
     clipboard: [],
     projects: [],
@@ -104,6 +107,13 @@ export default new Vuex.Store({
     [mutation.ADD_ACTIVE](state, childIndex) {
       state.active = childIndex;
     },
+    [mutation.PREVIEW](state, { sentence, comboIndex, data }) {
+      if (!(sentence in state.previews)) {
+        state.previews[sentence] = {};
+      }
+      state.previews[sentence][comboIndex] = base64toBlob(data, 'video/webm');
+      state.lastPreview = { sentence, comboIndex };
+    },
   },
   actions: {
     [action.CREATE_PROJECT](context, newProject) {
@@ -156,6 +166,14 @@ export default new Vuex.Store({
   modules: {
   },
   getters: {
+    getPreview(state) {
+      return (sentence, comboIndex) => {
+        if (!(sentence in state.previews)) {
+          return undefined;
+        }
+        return state.previews[sentence][comboIndex];
+      };
+    },
   },
   plugins: [socketPlugin(), commandsPlugin()],
 });
