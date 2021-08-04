@@ -8,7 +8,7 @@
 
     <v-btn text @click="showPopup = true">Change Project</v-btn>
     <v-btn text>Save</v-btn>
-    <v-btn text>Export</v-btn>
+    <v-btn text @click="exportProject">Export</v-btn>
     <ProjectPopUp v-model="showPopup" />
   </v-app-bar>
 </template>
@@ -27,6 +27,11 @@ export default {
     return {
       showPopup: false,
     };
+  },
+  methods: {
+    exportProject() {
+      this.$store.dispatch('EXPORT');
+    },
   },
   props: {},
 };

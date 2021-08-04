@@ -15,6 +15,23 @@ function offsetSelection(state, targetIndex, modeAdd) {
   });
 }
 
+function hashSegments(segments) {
+  return segments.reduce((acc, { sentence, comboIndex }) => `${acc}${sentence}${comboIndex}`, '');
+}
+
+function save(filename, blob) {
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveBlob(blob, filename);
+  } else {
+    const elem = window.document.createElement('a');
+    elem.href = window.URL.createObjectURL(blob);
+    elem.download = filename;
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
+  }
+}
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -26,6 +43,7 @@ export default new Vuex.Store({
       videoUrls: [],
     },
     previews: {},
+    renders: {},
     lastPreview: {},
     selected: [],
     clipboard: [],
@@ -34,6 +52,7 @@ export default new Vuex.Store({
     socketError: '',
     active: null,
     videoComponent: undefined,
+    rendering: null,
   },
   mutations: {
     [mutation.CHANGE_PROJECT_NAME](state, newName) {
@@ -123,6 +142,16 @@ export default new Vuex.Store({
         state.lastPreview = { sentence, comboIndex };
       }
     },
+    [mutation.WAIT_FOR_RENDER](state) {
+      const hash = hashSegments(state.segments);
+      if (!state.renders[hash]) { state.rendering = hash; }
+    },
+    [mutation.RENDER_RESULT](state, { hash, data }) {
+      state.renders[hash] = base64toBlob(data, 'video/webm');
+      if (hash === state.rendering) {
+        save(`${state.project.name}.webm`, state.renders[hash]);
+      }
+    },
   },
   actions: {
     [action.CREATE_PROJECT](context, newProject) {
@@ -153,6 +182,10 @@ export default new Vuex.Store({
     [action.command.CHANGE_COMBO_INDEX]() {
     },
     [action.command.CHANGE_SENTENCE]() {
+    },
+    [action.EXPORT]({ state, commit }) {
+      commit(mutation.WAIT_FOR_RENDER);
+      client.send('Export', { project_name: state.project.name });
     },
     [action.LIST_PROJECTS]() {
       client.send('ListProjects');
