@@ -22,6 +22,8 @@ const mutation = {
   ADD_ACTIVE: 'ADD_ACTIVE',
   PREVIEW: 'PREVIEW',
   PREVIEW_SEGMENT: 'PREVIEW_SEGMENT',
+  WAIT_FOR_RENDER: 'WAIT_FOR_RENDER',
+  RENDER_RESULT: 'RENDER_RESULT',
 };
 
 export default mutation;
