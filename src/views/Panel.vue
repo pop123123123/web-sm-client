@@ -15,7 +15,7 @@
       <v-col>
         <v-card style="height: 100%">
           <v-card-title> Preview </v-card-title>
-          <Video :sentence="videoSentence" :comboIndex="videoComboIndex" />
+          <Video/>
         </v-card>
       </v-col>
     </v-row>
@@ -31,14 +31,6 @@ export default {
   components: {
     Video,
     PanelTable,
-  },
-  computed: {
-    videoSentence() {
-      return this.$store.state.lastPreview.sentence;
-    },
-    videoComboIndex() {
-      return this.$store.state.lastPreview.comboIndex ?? 0;
-    },
   },
 };
 </script>
