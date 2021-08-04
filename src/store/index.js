@@ -44,7 +44,7 @@ export default new Vuex.Store({
     },
     previews: {},
     renders: {},
-    lastPreview: {},
+    lastPreview: [],
     selected: [],
     clipboard: [],
     projects: [],
@@ -135,11 +135,22 @@ export default new Vuex.Store({
         state.previews[sentence] = {};
       }
       state.previews[sentence][comboIndex] = base64toBlob(data, 'video/webm');
-      state.lastPreview = { sentence, comboIndex };
+      state.lastPreview = [{ sentence, comboIndex }];
     },
-    [mutation.PREVIEW_SEGMENT](state, { sentence, comboIndex }) {
-      if (state.previews[sentence] && state.previews[sentence][comboIndex] !== undefined) {
-        state.lastPreview = { sentence, comboIndex };
+    [mutation.PREVIEW_SEGMENTS](state, segmentsIndices) {
+      state.lastPreview = segmentsIndices.map((i) => ({ ...state.segments[i] }));
+      // if (!state.previews[hash]) {
+      //   state.lastPreview = hash;
+      // }
+    },
+    [mutation.WAIT_FOR_RENDER](state) {
+      const hash = hashSegments(state.segments);
+      if (!state.renders[hash]) { state.rendering = hash; }
+    },
+    [mutation.RENDER_RESULT](state, { hash, data }) {
+      state.renders[hash] = base64toBlob(data, 'video/webm');
+      if (hash === state.rendering) {
+        save(`${state.project.name}.webm`, state.renders[hash]);
       }
     },
     [mutation.WAIT_FOR_RENDER](state) {
@@ -205,7 +216,7 @@ export default new Vuex.Store({
       commit(mutation.ADD_ACTIVE, childIndex);
     },
     [action.PREVIEW_ACTIVE]({ state, commit }) {
-      commit(mutation.PREVIEW_SEGMENT, state.segments[state.active]);
+      commit(mutation.PREVIEW_SEGMENTS, state.selected);
       const video = state.videoComponent;
       if (video !== undefined) {
         video.startPreview();
@@ -216,10 +227,8 @@ export default new Vuex.Store({
   },
   getters: {
     getPreview(state) {
-      return (sentence, comboIndex) => {
-        if (!(sentence in state.previews)) {
-          return undefined;
-        }
+      return (index) => {
+        const { sentence, comboIndex } = state.lastPreview[index ?? 0];
         return state.previews[sentence][comboIndex];
       };
     },
