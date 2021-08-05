@@ -80,7 +80,8 @@ export default new Vuex.Store({
       state.segments[row].comboIndex = comboIndex;
     },
     [mutation.ADD_SELECTED](state, newSelected) {
-      state.selected.push(newSelected);
+      const index = state.selected.findIndex((element) => element > newSelected);
+      state.selected.splice(index === -1 ? state.selected.length : index, 0, newSelected);
     },
     [mutation.REMOVE_SELECTED](state, index) {
       state.selected.splice(index, 1);
