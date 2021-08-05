@@ -23,7 +23,6 @@ commands[action.command.DELETE] = class extends Command {
   constructor({ state }) {
     super();
     this.selected = [...state.selected];
-    this.selected.sort((a, b) => a - b);
     this.removed = this.selected.map((i) => ({ ...state.segments[i] }));
   }
 
