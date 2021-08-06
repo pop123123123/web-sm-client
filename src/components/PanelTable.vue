@@ -316,9 +316,10 @@ export default {
       }
       const dialog = this.$refs[`dialog_${oldActiveIndex}`];
       dialog?.cancel();
-      this.$refs.table.$el.querySelector('tbody').children[
-        newActiveIndex
-      ].style.background = '#82c0dd';
+      const row = this.$refs.table.$el.querySelector('tbody').children[newActiveIndex];
+      if (row !== undefined) {
+        row.style.background = '#82c0dd';
+      }
     },
   },
 };
