@@ -137,9 +137,11 @@ export default new Vuex.Store({
       }
       state.previews[sentence][comboIndex] = base64toBlob(data, 'video/webm');
       state.lastPreview = [{ sentence, comboIndex }];
+      state.videoComponent?.startPreview();
     },
     [mutation.PREVIEW_SEGMENTS](state, segmentsIndices) {
       state.lastPreview = segmentsIndices.map((i) => ({ ...state.segments[i] }));
+      state.videoComponent?.startPreview();
       // if (!state.previews[hash]) {
       //   state.lastPreview = hash;
       // }
@@ -218,10 +220,6 @@ export default new Vuex.Store({
     },
     [action.PREVIEW_ACTIVE]({ state, commit }) {
       commit(mutation.PREVIEW_SEGMENTS, state.selected);
-      const video = state.videoComponent;
-      if (video !== undefined) {
-        video.startPreview();
-      }
     },
   },
   modules: {
