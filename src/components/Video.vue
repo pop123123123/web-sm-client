@@ -32,6 +32,7 @@ export default {
       this.video(0).src = '';
       this.video(1).src = '';
       this.currentIndex = 0;
+      this.urls.forEach((url) => { URL.revokeObjectURL(url); });
       this.urls = [];
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = 0;
@@ -55,7 +56,7 @@ export default {
       if (!this.toPreview) return;
       if (this.toPreview.find((_, i) => this.$store.getters.getPreview(i) === undefined)) return;
 
-      this.urls = this.toPreview.map((_, i) => window.URL.createObjectURL(this.$store.getters
+      this.urls = this.toPreview.map((_, i) => URL.createObjectURL(this.$store.getters
         .getPreview(i)));
 
       this.load(0);
@@ -90,6 +91,9 @@ export default {
   },
   mounted() {
     this.$store.state.videoComponent = this;
+  },
+  beforeDestroy() {
+    this.reset();
   },
   destroyed() {
     this.$store.state.videoComponent = undefined;
