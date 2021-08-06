@@ -1,7 +1,12 @@
 <template>
   <div>
-    <video ref="video0" v-show="currentIndex % 2 === 0" @loadeddata="loaded(0)"></video>
-    <video ref="video1" v-show="currentIndex % 2 === 1" @loadeddata="loaded(1)"></video>
+    <video
+      v-for="i in 2"
+      :key="i"
+      ref="video"
+      v-show="currentIndex % 2 === i - 1"
+      @loadeddata="loaded(i - 1)"
+    ></video>
   </div>
 </template>
 
@@ -21,7 +26,7 @@ export default {
   },
   methods: {
     video(index) {
-      return this.$refs[`video${index % 2}`];
+      return this.$refs.video[index % 2];
     },
     reset() {
       this.video(0).src = '';
