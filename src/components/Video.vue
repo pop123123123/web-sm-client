@@ -1,50 +1,48 @@
 <template>
   <div>
-    <video ref="video0" v-show="currentIndex % 2 === 0" @canplaythrough="loaded(0)">
-      <source :src="src[0]" type="video/webm">
-      Sorry, your browser doesn't support embedded videos.
-    </video>
-    <video ref="video1" v-show="currentIndex % 2 === 1">
-      <source :src="src[1]" type="video/webm">
-      Sorry, your browser doesn't support embedded videos.
-    </video>
+    <video ref="video0" v-show="currentIndex % 2 === 0" @loadeddata="loaded(0)"></video>
+    <video ref="video1" v-show="currentIndex % 2 === 1" @loadeddata="loaded(1)"></video>
   </div>
 </template>
 
 <script>
+import Debug from 'debug';
+
+const debug = Debug('app:video');
+
 export default {
   name: 'Video',
   data() {
     return {
-      src: ['', ''],
-      currentIndex: null,
-      urls: null,
-      timeout: null,
+      currentIndex: 0,
+      urls: [],
+      timeout: 0,
     };
   },
   methods: {
+    video(index) {
+      return this.$refs[`video${index % 2}`];
+    },
     reset() {
-      this.$set(this.src, 0, '');
-      this.$set(this.src, 1, '');
-      this.urls = null;
-      this.currentIndex = null;
+      this.video(0).src = '';
+      this.video(1).src = '';
+      this.currentIndex = 0;
+      this.urls = [];
       if (this.timeout) clearTimeout(this.timeout);
-      this.timeout = null;
+      this.timeout = 0;
     },
-    play(element) {
-      this.$refs[`video${element}`].play();
+    play(index) {
+      debug('play');
+      this.video(index).play();
     },
-    load(url, element) {
-      const videoElem = this.$refs[`video${element}`];
+    load(index) {
+      debug('load', index);
+      const videoElem = this.video(index);
+      const url = this.urls[index];
       videoElem.pause();
-      this.$set(this.src, element, url);
+      videoElem.src = url;
       videoElem.load();
-      videoElem.currentTime = 0;
       return videoElem;
-    },
-    preview(url, element) {
-      // load and start video
-      this.load(url, element).play();
     },
     startPreview() {
       this.reset();
@@ -55,38 +53,29 @@ export default {
       this.urls = this.toPreview.map((_, i) => window.URL.createObjectURL(this.$store.getters
         .getPreview(i)));
 
-      this.currentIndex = 0;
-      this.load(this.urls[0], 0);
+      this.load(0);
     },
-    loaded(element) {
-      if (this.currentIndex === 0) {
-        const el = this.$refs[`video${element}`];
-        if (this.urls.length > 1) {
-          this.load(this.urls[1], 1);
-          this.timeout = setTimeout(
-            this.next,
-            el.duration * 1000,
-          );
-        }
-        el.play();
-      }
-    },
-    next() {
-      this.currentIndex += 1;
-      if (this.toPreview.length > this.currentIndex + 1) {
-        this.load(this.urls[this.currentIndex + 1], (this.currentIndex + 1) % 2);
-        const el = this.$refs[`video${this.currentIndex % 2}`];
+    loaded(index) {
+      debug('loaded', index);
+      const el = this.video(this.currentIndex);
+      if (index === 0 && this.currentIndex === 0) {
+        this.playAndLoadNext(false);
+      } else {
+        debug('timeout');
         this.timeout = setTimeout(
-          this.next,
-          el.duration * 1000,
+          this.playAndLoadNext,
+          (el.duration - el.currentTime) * 1000,
         );
       }
-      this.play(this.currentIndex % 2);
     },
-  },
-  watch: {
-    toPreview() {
-      this.startPreview();
+    playAndLoadNext(increment = true) {
+      if (increment) {
+        this.currentIndex += 1;
+      }
+      this.play(this.currentIndex);
+      if (this.currentIndex < this.urls.length - 1) {
+        this.load(this.currentIndex + 1);
+      }
     },
   },
   computed: {
@@ -95,7 +84,6 @@ export default {
     },
   },
   mounted() {
-    this.startPreview();
     this.$store.state.videoComponent = this;
   },
   destroyed() {
