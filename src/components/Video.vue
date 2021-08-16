@@ -1,12 +1,34 @@
 <template>
-  <div>
-    <video
-      v-for="i in 2"
-      :key="i"
-      ref="video"
-      v-show="currentIndex % 2 === i - 1"
-      @loadeddata="loaded(i - 1)"
-    ></video>
+  <div class="grey lighten-4">
+    <div v-show="!isReadyToPlay" class="pa-4 text-center">
+      <div>
+        <v-progress-circular
+          :size="50"
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+      </div>
+      <div class="mt-4">
+        {{ readyCount }}/{{ totalCount }} loaded segments
+      </div>
+      <div class="mt-4">
+        <v-alert
+          dense
+          type="warning"
+        >
+          If loading is stuck, please try restarting the preview
+        </v-alert>
+      </div>
+    </div>
+    <div v-show="isReadyToPlay">
+      <video
+        v-for="i in totalCount"
+        :key="i"
+        ref="video"
+        v-show="currentIndex % totalCount === i - 1"
+        @canplaythrough="updateReadyCount()"
+      ></video>
+    </div>
   </div>
 </template>
 
@@ -19,31 +41,40 @@ export default {
   name: 'Video',
   data() {
     return {
-      currentIndex: 0,
+      currentIndex: -1,
       urls: [],
+      durations: [],
       timeout: 0,
+      forceReadyUpdateValue: 0,
     };
   },
   methods: {
     video(index) {
-      return this.$refs.video[index % 2];
+      if (this.$refs.video !== undefined && this.totalCount > 0) {
+        return this.$refs.video[index % this.totalCount];
+      }
+      return undefined;
     },
     reset() {
-      this.video(0).src = '';
-      this.video(1).src = '';
-      this.currentIndex = 0;
+      debug('reset');
+      for (let index = 0; index < this.totalCount; index += 1) {
+        this.video(index).src = '';
+      }
+      this.currentIndex = -1;
       this.urls.forEach((url) => { URL.revokeObjectURL(url); });
       this.urls = [];
+      this.durations = [];
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = 0;
     },
     play(index) {
-      debug('play');
-      this.video(index).play();
+      debug('play', index);
+      this.video(index)?.play();
     },
     load(index) {
       debug('load', index);
       const videoElem = this.video(index);
+      if (videoElem === undefined) return undefined;
       const url = this.urls[index];
       videoElem.pause();
       videoElem.src = url;
@@ -58,35 +89,70 @@ export default {
 
       this.urls = this.toPreview.map((_, i) => URL.createObjectURL(this.$store.getters
         .getPreview(i)));
+      this.durations = Array(this.urls.length).fill(0);
 
-      this.load(0);
+      this.urls.forEach((url, i) => {
+        this.load(i);
+      });
     },
-    loaded(index) {
-      debug('loaded', index);
-      const el = this.video(this.currentIndex);
-      if (index === 0 && this.currentIndex === 0) {
-        this.playAndLoadNext(false);
-      } else {
-        debug('timeout');
-        this.timeout = setTimeout(
-          this.playAndLoadNext,
-          (el.duration - el.currentTime) * 1000,
-        );
-      }
+    startVideos() {
+      debug('startVideos');
+      this.playNext();
     },
-    playAndLoadNext(increment = true) {
-      if (increment) {
-        this.currentIndex += 1;
-      }
+    playNext() {
+      debug('playNext');
+      this.currentIndex += 1;
       this.play(this.currentIndex);
       if (this.currentIndex < this.urls.length - 1) {
-        this.load(this.currentIndex + 1);
+        const timeout = this.durations[this.currentIndex];
+        debug('timeout', timeout);
+        this.timeout = setTimeout(this.playNext, timeout * 1000);
       }
+    },
+    updateReadyCount() {
+      this.forceReadyUpdateValue += 1;
     },
   },
   computed: {
     toPreview() {
       return this.$store.state.lastPreview;
+    },
+    isReadyToPlay() {
+      return (this.currentIndex < 0 ? 0 : this.currentIndex) + this.readyCount >= this.totalCount;
+    },
+    readyStates() {
+      if (this.forceReadyUpdateValue);
+      return this.urls.map((url, i) => {
+        const el = this.video(i);
+        const isReady = el?.readyState === 4;
+        if (isReady) {
+          this.durations[i] = el.duration;
+        }
+        return isReady ? 1 : 0;
+      });
+    },
+    readyCount() {
+      return this.readyStates
+        .slice(this.currentIndex < 0 ? 0 : this.currentIndex)
+        .reduce((acc, val) => acc + val, 0);
+    },
+    totalCount() {
+      return this.urls.length;
+    },
+  },
+  watch: {
+    isReadyToPlay(val, prev) {
+      debug('watch isReadyToPlay', prev, val);
+      if (!prev && val) {
+        // isReadyToPlay becomes true
+        if (this.currentIndex < 0) {
+          this.startVideos();
+        } else {
+          debug('cannot start preview, already playing');
+        }
+      } else {
+        debug('readyStates', this.readyStates);
+      }
     },
   },
   mounted() {
