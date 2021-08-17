@@ -9,7 +9,7 @@
         ></v-progress-circular>
       </div>
       <div class="mt-4">
-        {{ readyCount }}/{{ totalCount }} loaded segments
+        Loading segments... ({{ Math.round(readyCount/totalCount*100) }}%)
       </div>
     </div>
     <div v-show="isReadyToPlay">
