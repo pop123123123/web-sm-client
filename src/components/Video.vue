@@ -1,6 +1,6 @@
 <template>
   <div class="grey lighten-4">
-    <div v-show="!isReadyToPlay" class="pa-4 text-center">
+    <div v-show="!isReadyToPlay" class="py-8 text-center">
       <div>
         <v-progress-circular
           :size="50"
@@ -11,21 +11,14 @@
       <div class="mt-4">
         {{ readyCount }}/{{ totalCount }} loaded segments
       </div>
-      <div class="mt-4">
-        <v-alert
-          dense
-          type="warning"
-        >
-          If loading is stuck, please try restarting the preview
-        </v-alert>
-      </div>
     </div>
     <div v-show="isReadyToPlay">
       <video
-        v-for="i in totalCount"
+        v-for="url, i in urls"
         :key="i"
+        :src="url"
         ref="video"
-        v-show="currentIndex % totalCount === i - 1"
+        v-show="currentIndex % totalCount === i"
         @canplaythrough="updateReadyCount()"
       ></video>
     </div>
@@ -75,9 +68,7 @@ export default {
       debug('load', index);
       const videoElem = this.video(index);
       if (videoElem === undefined) return undefined;
-      const url = this.urls[index];
       videoElem.pause();
-      videoElem.src = url;
       videoElem.load();
       return videoElem;
     },
