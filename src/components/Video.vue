@@ -81,7 +81,7 @@ export default {
     },
     startPreview() {
       this.reset();
-      // requested preview
+      // TODO: change after preview request is implemented
       if (!this.toPreview) return;
       this.errorLoadingPreviews = this.toPreview.some(
         (_, i) => this.$store.getters.getPreview(i) === undefined,
@@ -125,6 +125,7 @@ export default {
         && (this.currentIndex < 0 ? 0 : this.currentIndex) + this.readyCount >= this.totalCount;
     },
     readyStates() {
+      // Force reactivity of video readyState property
       if (this.forceReadyUpdateValue);
       return this.urls.map((url, i) => {
         const el = this.getVideo(i);
@@ -132,13 +133,13 @@ export default {
         if (isReady) {
           this.durations[i] = el.duration;
         }
-        return isReady ? 1 : 0;
+        return isReady;
       });
     },
     readyCount() {
       return this.readyStates
         .slice(this.currentIndex < 0 ? 0 : this.currentIndex)
-        .reduce((acc, val) => acc + val, 0);
+        .reduce((acc, val) => acc + Number(val), 0);
     },
     totalCount() {
       return this.urls.length;

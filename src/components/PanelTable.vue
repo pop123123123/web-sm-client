@@ -305,8 +305,7 @@ export default {
   },
   watch: {
     indexActive(newActiveIndex, oldActiveIndex) {
-      if (
-        (oldActiveIndex || oldActiveIndex === 0)// TODO a fix
+      if (oldActiveIndex != null
         && newActiveIndex !== oldActiveIndex
         && this.$refs.table.$el.querySelector('tbody').children[oldActiveIndex]
       ) {
