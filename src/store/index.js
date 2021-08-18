@@ -156,16 +156,6 @@ export default new Vuex.Store({
         save(`${state.project.name}.webm`, state.renders[hash]);
       }
     },
-    [mutation.WAIT_FOR_RENDER](state) {
-      const hash = hashSegments(state.segments);
-      if (!state.renders[hash]) { state.rendering = hash; }
-    },
-    [mutation.RENDER_RESULT](state, { hash, data }) {
-      state.renders[hash] = base64toBlob(data, 'video/webm');
-      if (hash === state.rendering) {
-        save(`${state.project.name}.webm`, state.renders[hash]);
-      }
-    },
   },
   actions: {
     [action.CREATE_PROJECT](context, newProject) {
