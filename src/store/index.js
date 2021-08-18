@@ -58,18 +58,6 @@ export default new Vuex.Store({
     rendering: null,
   },
   mutations: {
-    [mutation.CHANGE_PROJECT_NAME](state, name) {
-      state.project.name = name;
-      if (router.currentRoute.name !== 'ProjectEditor' || router.currentRoute.params.id !== name) {
-        router.push({ name: 'ProjectEditor', params: { id: name } });
-      }
-    },
-    [mutation.CHANGE_PROJECT_SEED](state, newSeed) {
-      state.project.seed = newSeed;
-    },
-    [mutation.CHANGE_PROJECT_VIDEOS](state, newVIDEOS) {
-      state.project.videoUrls = newVIDEOS;
-    },
     [mutation.NEW_SEGMENT](state, { segment: { s, i }, row }) {
       state.segments.splice(row, 0, { sentence: s, comboIndex: i });
       offsetSelection(state, row, 1);
