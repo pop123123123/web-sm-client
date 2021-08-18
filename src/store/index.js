@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import { base64toBlob } from '@/utils/base64';
+import router from '@/router';
 import mutation from './mutation-types';
 import action from './action-types';
 import { client, plugin as socketPlugin } from '../socket';
@@ -41,6 +42,7 @@ export default new Vuex.Store({
       name: null,
       seed: null,
       videoUrls: [],
+      loaded: false,
     },
     previews: {},
     renders: {},
@@ -56,8 +58,11 @@ export default new Vuex.Store({
     rendering: null,
   },
   mutations: {
-    [mutation.CHANGE_PROJECT_NAME](state, newName) {
-      state.project.name = newName;
+    [mutation.CHANGE_PROJECT_NAME](state, name) {
+      state.project.name = name;
+      if (router.currentRoute.name !== 'ProjectEditor' || router.currentRoute.params.id !== name) {
+        router.push({ name: 'ProjectEditor', params: { id: name } });
+      }
     },
     [mutation.CHANGE_PROJECT_SEED](state, newSeed) {
       state.project.seed = newSeed;
@@ -107,6 +112,10 @@ export default new Vuex.Store({
       state.project.name = name;
       state.project.videoUrls = videoUrls;
       state.segments = segments.map(({ s, i }) => ({ sentence: s, comboIndex: i }));
+      if (router.currentRoute.name !== 'ProjectEditor' || router.currentRoute.params.id !== name) {
+        router.push({ name: 'ProjectEditor', params: { id: name } });
+      }
+      state.project.loaded = true;
     },
     [mutation.USER_JOINED_PROJECT](state, { user }) {
       state.users.push(user);
@@ -206,7 +215,8 @@ export default new Vuex.Store({
     [action.DELETE_PROJECT](context, projectName) {
       client.send('DeleteProject', { project_name: projectName });
     },
-    [action.JOIN_PROJECT](context, projectName) {
+    [action.JOIN_PROJECT]({ state }, projectName) {
+      state.project.loaded = false;
       client.send('JoinProject', { project_name: projectName });
     },
     [action.CHANGE_SOCKET_ERROR]({ commit }, error) {

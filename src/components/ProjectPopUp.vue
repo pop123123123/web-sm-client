@@ -48,7 +48,10 @@ export default {
     tab: null,
   }),
   props: {
-    value: Boolean,
+    value: {
+      type: Boolean,
+      default: true,
+    },
     required: Boolean,
   },
   components: {
