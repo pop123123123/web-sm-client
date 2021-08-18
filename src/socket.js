@@ -1,9 +1,13 @@
 import action from '@/store/action-types';
 
 const socket = new WebSocket(`ws://${window.location.host}/ws/`);
+const messageQueue = [];
 
 const plugin = () => (store) => {
   socket.onopen = () => {
+    while (messageQueue.length > 0) {
+      socket.send(messageQueue.shift());
+    }
     store.dispatch(action.LIST_PROJECTS);
   };
   socket.onmessage = (event) => {
@@ -17,11 +21,20 @@ const plugin = () => (store) => {
       console.error(event.data);
     }
   };
+  socket.onerror = (event) => {
+    console.error('socket error:', event);
+  };
 };
 
 const client = {
   send(type, payload) {
-    socket.send(JSON.stringify({ [type]: payload ?? null }));
+    const message = JSON.stringify({ [type]: payload ?? null });
+
+    if (socket.readyState !== 1) {
+      messageQueue.push(message);
+    } else {
+      socket.send(message);
+    }
   },
 };
 
