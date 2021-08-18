@@ -44,7 +44,8 @@ export default new Vuex.Store({
     },
     previews: {},
     renders: {},
-    lastPreview: [],
+    requestedPreview: [],
+    currentPreview: [],
     selected: [],
     clipboard: [],
     projects: [],
@@ -136,12 +137,19 @@ export default new Vuex.Store({
         state.previews[sentence] = {};
       }
       state.previews[sentence][comboIndex] = base64toBlob(data, 'video/webm');
-      state.lastPreview = [{ sentence, comboIndex }];
-      state.videoComponent?.startPreview();
+      if (JSON.stringify(state.requestedPreview) === JSON.stringify([{ sentence, comboIndex }])) {
+        state.currentPreview = [{ sentence, comboIndex }];
+        state.videoComponent?.startPreview();
+      }
     },
     [mutation.PREVIEW_SEGMENTS](state, segmentsIndices) {
-      state.lastPreview = segmentsIndices.map((i) => ({ ...state.segments[i] }));
+      const p = segmentsIndices.map((i) => ({ ...state.segments[i] }));
+      state.requestedPreview = p;
+      state.currentPreview = p;
       state.videoComponent?.startPreview();
+    },
+    [mutation.CHANGE_REQUESTED_PREVIEW](state, preview) {
+      state.requestedPreview = preview;
     },
     [mutation.WAIT_FOR_RENDER](state) {
       const hash = hashSegments(state.segments);
@@ -180,9 +188,13 @@ export default new Vuex.Store({
     [action.PASTE](context) {
       context.dispatch(action.command.DUPLICATE_SENTENCE, context.state.clipboard);
     },
-    [action.command.CHANGE_COMBO_INDEX]() {
+    [action.command.CHANGE_COMBO_INDEX]({ state, commit }, { row, newComboIndex }) {
+      const preview = [{ sentence: state.segments[row].sentence, comboIndex: newComboIndex }];
+      commit(mutation.TO_PREVIEW, preview);
     },
-    [action.command.CHANGE_SENTENCE]() {
+    [action.command.CHANGE_SENTENCE]({ state, commit }, { index, newSentence }) {
+      const preview = [{ sentence: newSentence, comboIndex: state.segments[index].comboIndex }];
+      commit(mutation.TO_PREVIEW, preview);
     },
     [action.EXPORT]({ state, commit }) {
       commit(mutation.WAIT_FOR_RENDER);
@@ -214,8 +226,8 @@ export default new Vuex.Store({
   getters: {
     getPreview(state) {
       return (index) => {
-        if (state.lastPreview.length < 1) return undefined;
-        const { sentence, comboIndex } = state.lastPreview[index ?? 0];
+        if (state.currentPreview.length < 1) return undefined;
+        const { sentence, comboIndex } = state.currentPreview[index ?? 0];
         if (!state.previews[sentence] || state.previews[sentence][comboIndex] === undefined) {
           // TODO: request preview
           return undefined;
