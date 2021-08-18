@@ -227,7 +227,12 @@ export default new Vuex.Store({
   getters: {
     getPreview(state) {
       return (index) => {
+        if (state.lastPreview.length < 1) return undefined;
         const { sentence, comboIndex } = state.lastPreview[index ?? 0];
+        if (!state.previews[sentence] || state.previews[sentence][comboIndex] === undefined) {
+          // TODO: request preview
+          return undefined;
+        }
         return state.previews[sentence][comboIndex];
       };
     },
