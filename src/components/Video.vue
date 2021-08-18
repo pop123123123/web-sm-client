@@ -1,15 +1,21 @@
 <template>
   <div class="grey lighten-4">
     <div v-show="!isReadyToPlay" class="py-8 text-center">
-      <div>
+      <div v-if="errorLoadingPreviews" class="mx-4">
+        <v-alert
+          dense
+          type="error"
+        >Some previews are not loaded</v-alert>
+      </div>
+      <div v-else>
         <v-progress-circular
           :size="50"
           indeterminate
           color="primary"
         ></v-progress-circular>
-      </div>
-      <div class="mt-4">
-        Loading segments... ({{ Math.round(readyCount/totalCount*100) }}%)
+        <div class="mt-4">
+          Loading segments... ({{ Math.round(readyCount/totalCount*100) }}%)
+        </div>
       </div>
     </div>
     <div v-show="isReadyToPlay">
@@ -39,6 +45,7 @@ export default {
       durations: [],
       timeout: 0,
       forceReadyUpdateValue: 0,
+      errorLoadingPreviews: false,
     };
   },
   methods: {
@@ -76,7 +83,12 @@ export default {
       this.reset();
       // requested preview
       if (!this.toPreview) return;
-      if (this.toPreview.find((_, i) => this.$store.getters.getPreview(i) === undefined)) return;
+      this.errorLoadingPreviews = this.toPreview.some(
+        (_, i) => this.$store.getters.getPreview(i) === undefined,
+      );
+      if (this.errorLoadingPreviews) return;
+
+      this.allPreviewsAvailable = true;
 
       this.urls = this.toPreview.map((_, i) => URL.createObjectURL(this.$store.getters
         .getPreview(i)));
@@ -109,7 +121,8 @@ export default {
       return this.$store.state.lastPreview;
     },
     isReadyToPlay() {
-      return (this.currentIndex < 0 ? 0 : this.currentIndex) + this.readyCount >= this.totalCount;
+      return !this.errorLoadingPreviews
+        && (this.currentIndex < 0 ? 0 : this.currentIndex) + this.readyCount >= this.totalCount;
     },
     readyStates() {
       if (this.forceReadyUpdateValue);
