@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-row justify="space-between">
+    <div v-if="loading">
+      Loading project...
+    </div>
+    <v-row v-else justify="space-between">
       <v-col>
         <v-card>
           <v-card-text>
@@ -23,14 +26,30 @@
 </template>
 
 <script>
+import action from '@/store/action-types';
+
 import Video from '@/components/Video.vue';
 import PanelTable from '@/components/PanelTable.vue';
 
 export default {
-  name: 'Panel',
+  name: 'ProjectEditor',
   components: {
     Video,
     PanelTable,
+  },
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    loading() {
+      return !this.$store.state.project.loaded;
+    },
+  },
+  mounted() {
+    this.$store.dispatch(action.JOIN_PROJECT, this.id);
   },
 };
 </script>
