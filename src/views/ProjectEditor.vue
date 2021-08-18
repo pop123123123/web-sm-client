@@ -1,7 +1,15 @@
 <template>
   <div>
-    <div v-if="loading">
-      Loading project...
+    <div v-if="loading" class="text-center">
+      <v-progress-circular
+        :size="50"
+        color="primary"
+        indeterminate
+        class="my-8"
+      ></v-progress-circular>
+      <div>
+        Loading project...
+      </div>
     </div>
     <v-row v-else justify="space-between">
       <v-col>
