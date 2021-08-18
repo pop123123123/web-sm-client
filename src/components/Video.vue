@@ -49,7 +49,7 @@ export default {
     };
   },
   methods: {
-    video(index) {
+    getVideo(index) {
       if (this.$refs.video !== undefined && this.totalCount > 0) {
         return this.$refs.video[index % this.totalCount];
       }
@@ -58,7 +58,7 @@ export default {
     reset() {
       debug('reset');
       for (let index = 0; index < this.totalCount; index += 1) {
-        this.video(index).src = '';
+        this.getVideo(index).src = '';
       }
       this.currentIndex = -1;
       this.urls.forEach((url) => { URL.revokeObjectURL(url); });
@@ -69,11 +69,11 @@ export default {
     },
     play(index) {
       debug('play', index);
-      this.video(index)?.play();
+      this.getVideo(index)?.play();
     },
     load(index) {
       debug('load', index);
-      const videoElem = this.video(index);
+      const videoElem = this.getVideo(index);
       if (videoElem === undefined) return undefined;
       videoElem.pause();
       videoElem.load();
@@ -127,7 +127,7 @@ export default {
     readyStates() {
       if (this.forceReadyUpdateValue);
       return this.urls.map((url, i) => {
-        const el = this.video(i);
+        const el = this.getVideo(i);
         const isReady = el?.readyState === 4;
         if (isReady) {
           this.durations[i] = el.duration;
