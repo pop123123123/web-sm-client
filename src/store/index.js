@@ -142,9 +142,6 @@ export default new Vuex.Store({
     [mutation.PREVIEW_SEGMENTS](state, segmentsIndices) {
       state.lastPreview = segmentsIndices.map((i) => ({ ...state.segments[i] }));
       state.videoComponent?.startPreview();
-      // if (!state.previews[hash]) {
-      //   state.lastPreview = hash;
-      // }
     },
     [mutation.WAIT_FOR_RENDER](state) {
       const hash = hashSegments(state.segments);
