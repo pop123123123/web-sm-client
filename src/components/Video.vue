@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     toPreview() {
-      return this.$store.state.lastPreview;
+      return this.$store.state.currentPreview;
     },
     isReadyToPlay() {
       return !this.errorLoadingPreviews
