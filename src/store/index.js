@@ -42,7 +42,7 @@ export default new Vuex.Store({
       name: null,
       seed: null,
       videoUrls: [],
-      loaded: false,
+      loaded: false, // TODO: use getter bound to project state
     },
     previews: {},
     renders: {},

@@ -1,6 +1,8 @@
 import action from '@/store/action-types';
 
 const socket = new WebSocket(`ws://${window.location.host}/ws/`);
+
+// messages to send when socket becomes open
 const messageQueue = [];
 
 const plugin = () => (store) => {
