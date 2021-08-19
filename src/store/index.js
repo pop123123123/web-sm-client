@@ -204,8 +204,10 @@ export default new Vuex.Store({
       client.send('DeleteProject', { project_name: projectName });
     },
     [action.JOIN_PROJECT]({ state }, projectName) {
-      state.project.loaded = false;
-      client.send('JoinProject', { project_name: projectName });
+      if (state.project.name !== projectName) {
+        state.project.loaded = false;
+        client.send('JoinProject', { project_name: projectName });
+      }
     },
     [action.CHANGE_SOCKET_ERROR]({ commit }, error) {
       commit(mutation.CHANGE_SOCKET_ERROR, error);
