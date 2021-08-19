@@ -33,6 +33,18 @@ function save(filename, blob) {
   }
 }
 
+function reset(state) {
+  Vue.set(state, 'users', []);
+  Vue.set(state, 'active', null);
+  Vue.set(state, 'requestedPreview', []);
+  Vue.set(state, 'currentPreview', []);
+  Vue.set(state, 'selected', []);
+  Vue.set(state, 'clipboard', []);
+  Vue.set(state, 'previews', {});
+  Vue.set(state, 'renders', {});
+  Vue.set(state, 'rendering', null);
+}
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -61,7 +73,7 @@ export default new Vuex.Store({
     [mutation.NEW_SEGMENT](state, { segment: { s, i }, row }) {
       state.segments.splice(row, 0, { sentence: s, comboIndex: i });
       offsetSelection(state, row, 1);
-      if (state.active >= row) state.active += 1;
+      if (state.active != null && state.active >= row) state.active += 1;
     },
     [mutation.REMOVE_SEGMENT](state, { row }) {
       state.segments.splice(row, 1);
@@ -73,9 +85,16 @@ export default new Vuex.Store({
     [mutation.CHANGE_COMBO_INDEX](state, { row, comboIndex }) {
       state.segments[row].comboIndex = comboIndex;
     },
+    [mutation.SET_SELECTION](state, selection) {
+      Vue.set(state, 'selected', selection);
+    },
     [mutation.ADD_SELECTED](state, newSelected) {
-      const index = state.selected.findIndex((element) => element > newSelected);
-      state.selected.splice(index === -1 ? state.selected.length : index, 0, newSelected);
+      newSelected.forEach((el) => {
+        const index = state.selected.findIndex((element) => element > el);
+        if (index < 1 || state.selected[index - 1] !== el) {
+          state.selected.splice(index === -1 ? state.selected.length : index, 0, el);
+        }
+      });
     },
     [mutation.REMOVE_SELECTED](state, index) {
       state.selected.splice(index, 1);
@@ -100,6 +119,7 @@ export default new Vuex.Store({
       state.project.name = name;
       state.project.videoUrls = videoUrls;
       state.segments = segments.map(({ s, i }) => ({ sentence: s, comboIndex: i }));
+      reset(state);
       if (router.currentRoute.name !== 'ProjectEditor' || router.currentRoute.params.id !== name) {
         router.push({ name: 'ProjectEditor', params: { id: name } });
       }
@@ -171,7 +191,7 @@ export default new Vuex.Store({
     },
     [action.CHANGE_SELECTION]({ commit, state }, { newIndex, modeAdd }) {
       if (modeAdd) {
-        if (!state.selected.includes(newIndex)) { commit(mutation.ADD_SELECTED, newIndex); }
+        if (!state.selected.includes(newIndex)) { commit(mutation.ADD_SELECTED, [newIndex]); }
       } else {
         commit(
           mutation.REMOVE_SELECTED,

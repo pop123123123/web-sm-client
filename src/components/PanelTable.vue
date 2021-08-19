@@ -183,6 +183,25 @@ export default {
         this.$refs[`dialog_${index}`].isActive = true;
       }
     },
+    move(event, x) {
+      const len = this.$store.state.segments.length;
+      const target = Math.max(0, Math.min(this.$store.state.active + x, len - 1));
+      const { active } = this.$store.state;
+      if (active !== target) {
+        this.activate(target);
+        if (event.shiftKey) {
+          const beg = Math.min(active, target);
+          const end = Math.max(active, target);
+          const newSel = this.$store.state.segments.map((e, i) => i).slice(beg, end + 1);
+          this.$store.commit(mutation.ADD_SELECTED, newSel);
+        } else {
+          this.$store.commit(mutation.SELECT_ACTIVE);
+        }
+      } else if (!this.hasActive && len > 0 && !event.shiftKey && !event.ctrlKey) {
+        this.activate(0);
+        this.$store.commit(mutation.SELECT_ACTIVE);
+      }
+    },
     onkey(event) {
       const len = this.$store.state.segments.length;
       switch (event.key) {
@@ -199,16 +218,8 @@ export default {
             const index = this.$store.state.active == null ? len : this.$store.state.active + 1;
             this.$store.dispatch(action.command.NEW_EMPTY_SENTENCE, index);
             this.$store.commit(mutation.SELECT_ACTIVE);
-          } else if (this.hasActive && this.$store.state.active + 1 < len) {
-            this.activate(this.$store.state.active + 1);
-            if (event.shiftKey) {
-              this.$store.dispatch(action.CHANGE_SELECTION, {
-                newIndex: this.$store.state.active,
-                modeAdd: true,
-              });
-            } else {
-              this.$store.commit(mutation.SELECT_ACTIVE);
-            }
+          } else {
+            this.move(event, 1);
           }
           break;
         case 'ArrowUp':
@@ -219,17 +230,15 @@ export default {
               newIndexSegment,
             );
             this.$store.commit(mutation.SELECT_ACTIVE);
-          } else if (this.$store.state.active - 1 >= 0) {
-            this.activate(this.$store.state.active - 1);
-            if (event.shiftKey) {
-              this.$store.dispatch(action.CHANGE_SELECTION, {
-                newIndex: this.$store.state.active,
-                modeAdd: true,
-              });
-            } else {
-              this.$store.commit(mutation.SELECT_ACTIVE);
-            }
+          } else {
+            this.move(event, -1);
           }
+          break;
+        case 'PageUp':
+          this.move(event, -8);
+          break;
+        case 'PageDown':
+          this.move(event, 8);
           break;
         case 'ArrowLeft':
           if (this.hasActive) {
@@ -259,6 +268,11 @@ export default {
         case 'y':
           if (event.ctrlKey) {
             this.$store.dispatch(action.REDO);
+          }
+          break;
+        case 'a':
+          if (event.ctrlKey) {
+            this.$store.commit(mutation.SET_SELECTION, this.$store.state.segments.map((e, i) => i));
           }
           break;
         case ' ':
