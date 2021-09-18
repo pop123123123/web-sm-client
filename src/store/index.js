@@ -153,7 +153,7 @@ export default new Vuex.Store({
       if (!(sentence in state.previews)) {
         state.previews[sentence] = {};
       }
-      state.previews[sentence][comboIndex] = base64toBlob(data, 'video/webm');
+      state.previews[sentence][comboIndex] = base64toBlob(data, 'video/mp4');
       if (JSON.stringify(state.requestedPreview) === JSON.stringify([{ sentence, comboIndex }])) {
         state.currentPreview = [{ sentence, comboIndex }];
         state.videoComponent?.startPreview();
@@ -173,9 +173,9 @@ export default new Vuex.Store({
       if (!state.renders[hash]) { state.rendering = hash; }
     },
     [mutation.RENDER_RESULT](state, { hash, data }) {
-      state.renders[hash] = base64toBlob(data, 'video/webm');
+      state.renders[hash] = base64toBlob(data, 'video/mp4');
       if (hash === state.rendering) {
-        save(`${state.project.name}.webm`, state.renders[hash]);
+        save(`${state.project.name}.mp4`, state.renders[hash]);
       }
     },
   },
