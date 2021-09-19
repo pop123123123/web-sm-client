@@ -162,6 +162,18 @@ export default new Vuex.Store({
         state.videoComponent?.startPreview();
       }
     },
+    [mutation.PREVIEWS](state, { previews }) {
+      previews.forEach(({ s: sentence, i: comboIndex, data }) => {
+        if (!(sentence in state.previews)) {
+          state.previews[sentence] = {};
+        }
+        state.previews[sentence][comboIndex] = base64toBlob(data, 'video/mp4');
+        if (JSON.stringify(state.requestedPreview) === JSON.stringify([{ sentence, comboIndex }])) {
+          state.currentPreview = [{ sentence, comboIndex }];
+          state.videoComponent?.startPreview();
+        }
+      });
+    },
     [mutation.PREVIEW_SEGMENTS](state, segmentsIndices) {
       const p = segmentsIndices.map((i) => ({ ...state.segments[i] }));
       state.requestedPreview = p;
