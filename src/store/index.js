@@ -134,6 +134,9 @@ export default new Vuex.Store({
     [mutation.CHANGE_LIST_PROJECTS](state, { projects }) {
       Vue.set(state, 'projects', projects);
     },
+    [mutation.AMBIGUITY_TOKEN](state, { row, token }) {
+      state.socketError = `Word "${token}" of row ${row} is ambiguous. Please change it.`;// TODO open line editor on row *row*
+    },
     [mutation.CHANGE_SOCKET_ERROR](state, error) {
       state.socketError = error;
     },
