@@ -45,6 +45,17 @@ function reset(state) {
   Vue.set(state, 'rendering', null);
 }
 
+function setPreview(state, { s: sentence, i: comboIndex, data }) {
+  if (!(sentence in state.previews)) {
+    state.previews[sentence] = {};
+  }
+  state.previews[sentence][comboIndex] = base64toBlob(data, 'video/mp4');
+  if (JSON.stringify(state.requestedPreview) === JSON.stringify([{ sentence, comboIndex }])) {
+    state.currentPreview = [{ sentence, comboIndex }];
+    state.videoComponent?.startPreview();
+  }
+}
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -152,26 +163,10 @@ export default new Vuex.Store({
     [mutation.ADD_ACTIVE](state, childIndex) {
       state.active = childIndex;
     },
-    [mutation.PREVIEW](state, { s: sentence, i: comboIndex, data }) {
-      if (!(sentence in state.previews)) {
-        state.previews[sentence] = {};
-      }
-      state.previews[sentence][comboIndex] = base64toBlob(data, 'video/mp4');
-      if (JSON.stringify(state.requestedPreview) === JSON.stringify([{ sentence, comboIndex }])) {
-        state.currentPreview = [{ sentence, comboIndex }];
-        state.videoComponent?.startPreview();
-      }
-    },
+    [mutation.PREVIEW]: setPreview,
     [mutation.PREVIEWS](state, { previews }) {
-      previews.forEach(({ s: sentence, i: comboIndex, data }) => {
-        if (!(sentence in state.previews)) {
-          state.previews[sentence] = {};
-        }
-        state.previews[sentence][comboIndex] = base64toBlob(data, 'video/mp4');
-        if (JSON.stringify(state.requestedPreview) === JSON.stringify([{ sentence, comboIndex }])) {
-          state.currentPreview = [{ sentence, comboIndex }];
-          state.videoComponent?.startPreview();
-        }
+      previews.forEach((p) => {
+        setPreview(state, p);
       });
     },
     [mutation.PREVIEW_SEGMENTS](state, segmentsIndices) {
