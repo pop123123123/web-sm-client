@@ -190,8 +190,8 @@ export default {
       if (active !== target) {
         this.activate(target);
         if (event.shiftKey) {
-          const beg = Math.min(active, target);
-          const end = Math.max(active, target);
+          const beg = Math.min(active + 1, target);
+          const end = Math.max(active - 1, target);
           const newSel = this.$store.state.segments.map((e, i) => i).slice(beg, end + 1);
           this.$store.commit(mutation.ADD_SELECTED, newSel);
         } else {
