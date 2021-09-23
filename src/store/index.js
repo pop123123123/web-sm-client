@@ -100,12 +100,8 @@ export default new Vuex.Store({
       Vue.set(state, 'selected', selection);
     },
     [mutation.ADD_SELECTED](state, newSelected) {
-      newSelected.forEach((el) => {
-        const index = state.selected.findIndex((element) => element > el);
-        if (index < 1 || state.selected[index - 1] !== el) {
-          state.selected.splice(index === -1 ? state.selected.length : index, 0, el);
-        }
-      });
+      const selectionSet = new Set([...state.selected, ...newSelected]);
+      state.selected = Array.from(selectionSet).sort((a, b) => a - b);
     },
     [mutation.REMOVE_SELECTED](state, index) {
       state.selected.splice(index, 1);
